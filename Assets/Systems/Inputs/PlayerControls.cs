@@ -7,6 +7,102 @@ public class PlayerControls : MonoBehaviour
     
     private PlayerInputActions _playerActions;
     
+    private MoveData _moveData;
+    private LookData _lookData;
+    private FireData _fireData;
+    private AimData _aimData;
+    private InteractData _interactData;
+    private JumpData _jumpData;
+    private DashData _dashData;
+    private StartData _startData;
+    private PauseData _pauseData;
+    
+    private MenuDirectionData _menuDirectionData;
+    private MenuInteractData _menuInteractData;
+    
+    
+    struct MoveData
+    {
+        public bool MoveStarted;
+        public bool MovePerformed;
+        public bool MoveCanceled;
+        public Vector2 MoveValue;
+    }
+    
+    struct LookData
+    {
+        public bool LookStarted;
+        public bool LookPerformed;
+        public bool LookCanceled;
+        public Vector2 LookValue;
+    }
+    
+    struct FireData
+    {
+        public bool FireStarted;
+        public bool FirePerformed;
+        public bool FireCanceled;
+    }
+    
+    struct AimData
+    {
+        public bool AimStarted;
+        public bool AimPerformed;
+        public bool AimCanceled;
+    }
+    
+    struct InteractData
+    {
+        public bool InteractStarted;
+        public bool InteractPerformed;
+        public bool InteractCanceled;
+    }
+    
+    struct JumpData
+    {
+        public bool JumpStarted;
+        public bool JumpPerformed;
+        public bool JumpCanceled;
+    }
+    
+    struct DashData
+    {
+        public bool DashStarted;
+        public bool DashPerformed;
+        public bool DashCanceled;
+    }
+    
+    struct StartData
+    {
+        public bool StartStarted;
+        public bool StartPerformed;
+        public bool StartCanceled;
+    }
+    
+    struct PauseData
+    {
+        public bool PauseStarted;
+        public bool PausePerformed;
+        public bool PauseCanceled;
+    }
+    
+    struct MenuDirectionData
+    {
+        public bool MenuDirectionStarted;
+        public bool MenuDirectionPerformed;
+        public bool MenuDirectionCanceled;
+        public Vector2 MenuDirectionValue;
+    }
+    
+    struct MenuInteractData
+    {
+        public bool MenuInteractStarted;
+        public bool MenuInteractPerformed;
+        public bool MenuInteractCanceled;
+    }
+    
+    
+    
     void Awake()
     {
         if (Instance == null)
@@ -26,96 +122,96 @@ public class PlayerControls : MonoBehaviour
     
     private void SubscribeControls()
     {
-        _playerActions.Player.Move.started += MoveStarted;
-        _playerActions.Player.Move.performed += MovePerformed;
-        _playerActions.Player.Move.canceled += MoveCanceled;
+        _playerActions.Player.Move.started += Move;
+        _playerActions.Player.Move.performed += Move;
+        _playerActions.Player.Move.canceled += Move;
         
-        _playerActions.Player.Look.started += LookStarted;
-        _playerActions.Player.Look.performed += LookPerformed;
-        _playerActions.Player.Look.canceled += LookCanceled;
+        _playerActions.Player.Look.started += Look;
+        _playerActions.Player.Look.performed += Look;
+        _playerActions.Player.Look.canceled += Look;
         
-        _playerActions.Player.Fire.started += FireStarted;
-        _playerActions.Player.Fire.performed += FirePerformed;
-        _playerActions.Player.Fire.canceled += FireCanceled;
+        _playerActions.Player.Fire.started += Fire;
+        _playerActions.Player.Fire.performed += Fire;
+        _playerActions.Player.Fire.canceled += Fire;
         
-        _playerActions.Player.Aim.started += AimStarted;
-        _playerActions.Player.Aim.performed += AimPerformed;
-        _playerActions.Player.Aim.canceled += AimCanceled;
+        _playerActions.Player.Aim.started += Aim;
+        _playerActions.Player.Aim.performed += Aim;
+        _playerActions.Player.Aim.canceled += Aim;
         
-        _playerActions.Player.Interact.started += InteractStarted;
-        _playerActions.Player.Interact.performed += InteractPerformed;
-        _playerActions.Player.Interact.canceled += InteractCanceled;
+        _playerActions.Player.Interact.started += Interact;
+        _playerActions.Player.Interact.performed += Interact;
+        _playerActions.Player.Interact.canceled += Interact;
                 
-        _playerActions.Player.Jump.started += JumpStarted;
-        _playerActions.Player.Jump.performed += JumpPerformed;
-        _playerActions.Player.Jump.canceled += JumpCanceled;
+        _playerActions.Player.Jump.started += Jump;
+        _playerActions.Player.Jump.performed += Jump;
+        _playerActions.Player.Jump.canceled += Jump;
         
-        _playerActions.Player.Dash.started += DashStarted;
-        _playerActions.Player.Dash.performed += DashPerformed;
-        _playerActions.Player.Dash.canceled += DashCanceled;
+        _playerActions.Player.Dash.started += Dash;
+        _playerActions.Player.Dash.performed += Dash;
+        _playerActions.Player.Dash.canceled += Dash;
         
-        _playerActions.Player.Start.started += StartStarted;
-        _playerActions.Player.Start.performed += StartPerformed;
-        _playerActions.Player.Start.canceled += StartCanceled;
+        _playerActions.Player.Start.started += Start;
+        _playerActions.Player.Start.performed += Start;
+        _playerActions.Player.Start.canceled += Start;
         
-        _playerActions.Player.Pause.started += PauseStarted;
-        _playerActions.Player.Pause.performed += PausePerformed;
-        _playerActions.Player.Pause.canceled += PauseCanceled;
+        _playerActions.Player.Pause.started += Pause;
+        _playerActions.Player.Pause.performed += Pause;
+        _playerActions.Player.Pause.canceled += Pause;
 
-        _playerActions.Menu.MenuDirection.started += MenuUpStarted;
-        _playerActions.Menu.MenuDirection.performed += MenuUpPerformed;
-        _playerActions.Menu.MenuDirection.canceled += MenuUpCanceled;
+        _playerActions.Menu.MenuDirection.started += MenuDirection;
+        _playerActions.Menu.MenuDirection.performed += MenuDirection;
+        _playerActions.Menu.MenuDirection.canceled += MenuDirection;
         
-        _playerActions.Menu.MenuInteract.started += MenuInteractStarted;
-        _playerActions.Menu.MenuInteract.performed += MenuInteractPerformed;
-        _playerActions.Menu.MenuInteract.canceled += MenuInteractCanceled;
+        _playerActions.Menu.MenuInteract.started += MenuInteract;
+        _playerActions.Menu.MenuInteract.performed += MenuInteract;
+        _playerActions.Menu.MenuInteract.canceled += MenuInteract;
     }
 
     private void UnsubscribeControls()
     {
-        _playerActions.Player.Move.started -= MoveStarted;
-        _playerActions.Player.Move.performed -= MovePerformed;
-        _playerActions.Player.Move.canceled -= MoveCanceled;
+        _playerActions.Player.Move.started -= Move;
+        _playerActions.Player.Move.performed -= Move;
+        _playerActions.Player.Move.canceled -= Move;
         
-        _playerActions.Player.Look.started -= LookStarted;
-        _playerActions.Player.Look.performed -= LookPerformed;
-        _playerActions.Player.Look.canceled -= LookCanceled;
+        _playerActions.Player.Look.started -= Look;
+        _playerActions.Player.Look.performed -= Look;
+        _playerActions.Player.Look.canceled -= Look;
         
-        _playerActions.Player.Fire.started -= FireStarted;
-        _playerActions.Player.Fire.performed -= FirePerformed;
-        _playerActions.Player.Fire.canceled -= FireCanceled;
+        _playerActions.Player.Fire.started -= Fire;
+        _playerActions.Player.Fire.performed -= Fire;
+        _playerActions.Player.Fire.canceled -= Fire;
         
-        _playerActions.Player.Aim.started -= AimStarted;
-        _playerActions.Player.Aim.performed -= AimPerformed;
-        _playerActions.Player.Aim.canceled -= AimCanceled;
+        _playerActions.Player.Aim.started -= Aim;
+        _playerActions.Player.Aim.performed -= Aim;
+        _playerActions.Player.Aim.canceled -= Aim;
         
-        _playerActions.Player.Interact.started -= InteractStarted;
-        _playerActions.Player.Interact.performed -= InteractPerformed;
-        _playerActions.Player.Interact.canceled -= InteractCanceled;
+        _playerActions.Player.Interact.started -= Interact;
+        _playerActions.Player.Interact.performed -= Interact;
+        _playerActions.Player.Interact.canceled -= Interact;
         
-        _playerActions.Player.Jump.started -= JumpStarted;
-        _playerActions.Player.Jump.performed -= JumpPerformed;
-        _playerActions.Player.Jump.canceled -= JumpCanceled;
+        _playerActions.Player.Jump.started -= Jump;
+        _playerActions.Player.Jump.performed -= Jump;
+        _playerActions.Player.Jump.canceled -= Jump;
         
-        _playerActions.Player.Dash.started -= DashStarted;
-        _playerActions.Player.Dash.performed -= DashPerformed;
-        _playerActions.Player.Dash.canceled -= DashCanceled;
+        _playerActions.Player.Dash.started -= Dash;
+        _playerActions.Player.Dash.performed -= Dash;
+        _playerActions.Player.Dash.canceled -= Dash;
         
-        _playerActions.Player.Start.started -= StartStarted;
-        _playerActions.Player.Start.performed -= StartPerformed;
-        _playerActions.Player.Start.canceled -= StartCanceled;
+        _playerActions.Player.Start.started -= Start;
+        _playerActions.Player.Start.performed -= Start;
+        _playerActions.Player.Start.canceled -= Start;
         
-        _playerActions.Player.Pause.started -= PauseStarted;
-        _playerActions.Player.Pause.performed -= PausePerformed;
-        _playerActions.Player.Pause.canceled -= PauseCanceled;
+        _playerActions.Player.Pause.started -= Pause;
+        _playerActions.Player.Pause.performed -= Pause;
+        _playerActions.Player.Pause.canceled -= Pause;
         
-        _playerActions.Menu.MenuDirection.started -= MenuUpStarted;
-        _playerActions.Menu.MenuDirection.performed -= MenuUpPerformed;
-        _playerActions.Menu.MenuDirection.canceled -= MenuUpCanceled;
+        _playerActions.Menu.MenuDirection.started -= MenuDirection;
+        _playerActions.Menu.MenuDirection.performed -= MenuDirection;
+        _playerActions.Menu.MenuDirection.canceled -= MenuDirection;
         
-        _playerActions.Menu.MenuInteract.started -= MenuInteractStarted;
-        _playerActions.Menu.MenuInteract.performed -= MenuInteractPerformed;
-        _playerActions.Menu.MenuInteract.canceled -= MenuInteractCanceled;
+        _playerActions.Menu.MenuInteract.started -= MenuInteract;
+        _playerActions.Menu.MenuInteract.performed -= MenuInteract;
+        _playerActions.Menu.MenuInteract.canceled -= MenuInteract;
     }
     
     private void EnableControls()
@@ -148,147 +244,119 @@ public class PlayerControls : MonoBehaviour
             _playerActions.Menu.Enable();
     }
     
-    private void MoveStarted(InputAction.CallbackContext ctx)
+    private void Move(InputAction.CallbackContext ctx)
     {
-        Debug.Log("MoveStarted");
+        _moveData = new MoveData
+        {
+            MoveStarted = ctx.started,
+            MovePerformed = ctx.performed,
+            MoveCanceled = ctx.canceled,
+            MoveValue = ctx.canceled ? Vector2.zero : ctx.ReadValue<Vector2>()
+        };
     }
-    private void MovePerformed(InputAction.CallbackContext ctx)
+
+    private void Look(InputAction.CallbackContext ctx)
     {
-        Debug.Log("MovePerformed");
+        _lookData = new LookData
+        {
+            LookStarted = ctx.started,
+            LookPerformed = ctx.performed,
+            LookCanceled = ctx.canceled,
+            LookValue = ctx.canceled ? Vector2.zero : ctx.ReadValue<Vector2>()
+        };
+
     }
-    private void MoveCanceled(InputAction.CallbackContext ctx)
+
+    private void Fire(InputAction.CallbackContext ctx)
     {
-        Debug.Log("MoveCanceled");
-    }
-    
-    private void LookStarted(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("LookStarted");
-    }
-    private void LookPerformed(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("LookPerformed");
-    }
-    private void LookCanceled(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("LookCanceled");
-    }
-    
-    private void FireStarted(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("FireStarted");
-    }
-    private void FirePerformed(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("FirePerformed");
-    }
-    private void FireCanceled(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("FireCanceled");
+        _fireData = new FireData
+        {
+            FireStarted = ctx.started,
+            FirePerformed = ctx.performed,
+            FireCanceled = ctx.canceled
+        };
     }
     
-    private void AimStarted(InputAction.CallbackContext ctx)
+    private void Aim(InputAction.CallbackContext ctx)
     {
-        Debug.Log("AimStarted");
-    }
-    private void AimPerformed(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("AimPerformed");
-    }
-    private void AimCanceled(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("AimCanceled");
+        _aimData = new AimData
+        {
+            AimStarted = ctx.started,
+            AimPerformed = ctx.performed,
+            AimCanceled = ctx.canceled
+        };
     }
     
-    private void InteractStarted(InputAction.CallbackContext ctx)
+    private void Interact(InputAction.CallbackContext ctx)
     {
-        Debug.Log("InteractStarted");
-    }
-    private void InteractPerformed(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("InteractPerformed");
-    }
-    private void InteractCanceled(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("InteractCanceled");
+        _interactData = new InteractData
+        {
+            InteractStarted = ctx.started,
+            InteractPerformed = ctx.performed,
+            InteractCanceled = ctx.canceled
+        };
     }
     
-    private void JumpStarted(InputAction.CallbackContext ctx)
+    private void Jump(InputAction.CallbackContext ctx)
     {
-        Debug.Log("JumpStarted");
-    }
-    private void JumpPerformed(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("JumpPerformed");
-    }
-    private void JumpCanceled(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("JumpCanceled");
+        _jumpData = new JumpData
+        {
+            JumpStarted = ctx.started,
+            JumpPerformed = ctx.performed,
+            JumpCanceled = ctx.canceled
+        };
     }
     
-    private void DashStarted(InputAction.CallbackContext ctx)
+    private void Dash(InputAction.CallbackContext ctx)
     {
-        Debug.Log("DashStarted");
-    }
-    private void DashPerformed(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("DashPerformed");
-    }
-    private void DashCanceled(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("DashCanceled");
+        _dashData = new DashData
+        {
+            DashStarted = ctx.started,
+            DashPerformed = ctx.performed,
+            DashCanceled = ctx.canceled
+        };
     }
     
-    private void StartStarted(InputAction.CallbackContext ctx)
+    private void Start(InputAction.CallbackContext ctx)
     {
-        Debug.Log("StartStarted");
-    }
-    private void StartPerformed(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("StartPerformed");
-    }
-    private void StartCanceled(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("StartCanceled");
+        _startData = new StartData
+        {
+            StartStarted = ctx.started,
+            StartPerformed = ctx.performed,
+            StartCanceled = ctx.canceled
+        };
     }
     
-    private void PauseStarted(InputAction.CallbackContext ctx)
+    private void Pause(InputAction.CallbackContext ctx)
     {
-        Debug.Log("PauseStarted");
-    }
-    private void PausePerformed(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("PausePerformed");
-    }
-    private void PauseCanceled(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("PauseCanceled");
+        _pauseData = new PauseData
+        {
+            PauseStarted = ctx.started,
+            PausePerformed = ctx.performed,
+            PauseCanceled = ctx.canceled
+        };
     }
     
-    private void MenuUpStarted(InputAction.CallbackContext ctx)
+    private void MenuDirection(InputAction.CallbackContext ctx)
     {
-        Debug.Log("MenuUpStarted");
-    }
-    private void MenuUpPerformed(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("MenuUpPerformed");
-    }
-    private void MenuUpCanceled(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("MenuUpCanceled");
+        _menuDirectionData = new MenuDirectionData
+        {
+            MenuDirectionStarted = ctx.started,
+            MenuDirectionPerformed = ctx.performed,
+            MenuDirectionCanceled = ctx.canceled,
+            MenuDirectionValue = ctx.canceled ? Vector2.zero : ctx.ReadValue<Vector2>()
+        };
     }
     
-    private void MenuInteractStarted(InputAction.CallbackContext ctx)
+    private void MenuInteract(InputAction.CallbackContext ctx)
     {
-        Debug.Log("MenuDownStarted");
+        _menuInteractData = new MenuInteractData
+        {
+            MenuInteractStarted = ctx.started,
+            MenuInteractPerformed = ctx.performed,
+            MenuInteractCanceled = ctx.canceled
+        };
     }
-    private void MenuInteractPerformed(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("MenuDownPerformed");
-    }
-    private void MenuInteractCanceled(InputAction.CallbackContext ctx)
-    {
-        Debug.Log("MenuDownCanceled");
-    }
+    
     
 }
