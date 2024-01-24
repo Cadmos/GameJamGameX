@@ -240,6 +240,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 560201243}
+  - component: {fileID: 560201246}
+  - component: {fileID: 560201245}
+  - component: {fileID: 560201244}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -263,6 +266,87 @@ Transform:
   - {fileID: 735555684}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &560201244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 560201242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3395a40c165fe4e850f4fd85524678, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerObject:
+    _playerStateManager:
+      _controller:
+        _rigidbody: {fileID: 560201246}
+        _collider: {fileID: 560201245}
+      _character:
+        _playerAnimator:
+          _animator: {fileID: 735555686}
+        _playerCharacterAttributes:
+          _playerHealth:
+            _currentHealth: 0
+            _maxHealth: 0
+            _gameOverHealth: 0
+          _playerMoveSpeed:
+            _moveSpeed: 0
+          _playerAttackDamage:
+            _attackDamage: 10
+          _playerInteractionRange:
+            _interactionRange: 0
+--- !u!136 &560201245
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 560201242}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &560201246
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 560201242}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &709195409
 GameObject:
   m_ObjectHideFlags: 0
@@ -447,7 +531,11 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 310a152b78ed7ab4ab804cb5375f9abc,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 735555686}
   m_SourcePrefab: {fileID: 100100000, guid: 310a152b78ed7ab4ab804cb5375f9abc, type: 3}
 --- !u!4 &735555684 stripped
 Transform:
@@ -455,6 +543,33 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 735555683}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &735555685 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 310a152b78ed7ab4ab804cb5375f9abc,
+    type: 3}
+  m_PrefabInstance: {fileID: 735555683}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &735555686
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 735555685}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &879720742
 GameObject:
   m_ObjectHideFlags: 0
