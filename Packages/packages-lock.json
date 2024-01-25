@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.ioni.godspeed": {
+      "version": "https://github.com/tunderix/GodSpeed.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "66cdaa83e4a4984268fafea6b423dada2b5402fc"
+    },
     "com.unity.animation.rigging": {
       "version": "1.2.1",
       "depth": 0,
