@@ -133,6 +133,7 @@ GameObject:
   m_Component:
   - component: {fileID: 764720975}
   - component: {fileID: 764720974}
+  - component: {fileID: 764720976}
   m_Layer: 0
   m_Name: TEST
   m_TagString: Untagged
@@ -152,6 +153,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f081795e225554459d82ea10ccd9235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dataobject:
+    name: 
+    ddd: 
+  numbers: 04000000
 --- !u!4 &764720975
 Transform:
   m_ObjectHideFlags: 0
@@ -159,6 +164,80 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 764720973}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.14117074, y: 0.15440452, z: 2.2521064}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &764720976
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 764720973}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f92f3f7004f78649bfa8894c89c6ae8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  listenEvent: {fileID: 11400000, guid: d1674852f8bb33c47b69e24be6994623, type: 2}
+  actEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 764720974}
+        m_TargetAssemblyTypeName: GodSpeed.TestingGodSpeed, Assembly-CSharp
+        m_MethodName: EventTest
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 4
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  debuggingEnabled: 1
+--- !u!1 &1957421976
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1957421978}
+  - component: {fileID: 1957421977}
+  m_Layer: 0
+  m_Name: TRIGGER
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1957421977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957421976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2afacff02248ba4cb4b32937e56be1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  e: {fileID: 11400000, guid: d1674852f8bb33c47b69e24be6994623, type: 2}
+--- !u!4 &1957421978
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1957421976}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.14117074, y: 0.15440452, z: 2.2521064}
@@ -384,3 +463,4 @@ SceneRoots:
   - {fileID: 2132255106}
   - {fileID: 2071200749}
   - {fileID: 764720975}
+  - {fileID: 1957421978}
