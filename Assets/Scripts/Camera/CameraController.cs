@@ -11,7 +11,6 @@ public class CameraController : MonoBehaviour
     [SerializeField] private GameObject _cinemachineTargetObject;
     [SerializeField] private float _cinemachineTargetX;
     [SerializeField] private float _cinemachineTargetY;
-    
     private void Awake()
     {
         if (Instance == null)
@@ -23,7 +22,6 @@ public class CameraController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
     }
     
     
@@ -50,5 +48,4 @@ public class CameraController : MonoBehaviour
         if(angle > 360) angle -= 360;
         return Mathf.Clamp(angle, angleMin, angleMax);
     }
-    
 }

@@ -45,9 +45,8 @@ namespace FGJ24.Player
         #endregion
         #endregion
 
-        public void InitializeStates()
+        public void Initialize()
         {
-            //Debug.Log("Character State Manager Start");
             _idleState = new PlayerIdleState(_character, _controller);
             _moveState = new PlayerMoveState(_character, _controller);
             
@@ -57,7 +56,7 @@ namespace FGJ24.Player
 
         public void Update()
         {
-            Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
+            //Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
             _currentState.UpdateState(this);
         }
 
@@ -68,7 +67,6 @@ namespace FGJ24.Player
 
         public void LateUpdate()
         {
-            Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
             _currentState.LateUpdateState(this);
         }
         

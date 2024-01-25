@@ -18,22 +18,18 @@ namespace FGJ24.Player
         }
         public override void UpdateState(PlayerStateManager player)
         {
-
-            Debug.Log("PlayerIdleState.UpdateState11111111");
-            if (PlayerControls.Instance.moveData.MovePerformed)
+            if (PlayerControls.Instance.moveData.movePerformed)
             {
                 player.SwitchState(player.GetPlayerMoveState());
             }
-            
-            
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
         }
         public override void LateUpdateState(PlayerStateManager player)
         {
-            Debug.Log("PlayerIdleState.LateUpdateState11111111");
-                CameraController.Instance.Look(PlayerControls.Instance.lookData.LookValue, _character.GetPlayerCharacterAttributes().GetPlayerLookSpeed().GetLookSpeed());
+            //Debug.Log("PlayerIdleState.LateUpdateState11111111");
+            //CameraController.Instance.Look(PlayerControls.Instance.lookData.lookValue, _character.GetPlayerCharacterAttributes().GetPlayerLookSpeed().GetLookSpeed());
         }
     }
 }

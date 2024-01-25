@@ -8,7 +8,7 @@ namespace FGJ24.Player
         private PlayerController _controller;
 
         
-        private Vector3 _inputDirection;
+        private Vector3 _moveInput;
         private float _movementSpeed;
         
         public PlayerMoveState(PlayerCharacter character, PlayerController controller)
@@ -22,16 +22,18 @@ namespace FGJ24.Player
         }
         public override void UpdateState(PlayerStateManager player)
         {
-            if (PlayerControls.Instance.moveData.MovePerformed == false)
+            if (PlayerControls.Instance.moveData.movePerformed == false)
                 player.SwitchState(player.GetPlayerIdleState());
-
-            _inputDirection = new Vector3(PlayerControls.Instance.moveData.MoveValue.x, 0, PlayerControls.Instance.moveData.MoveValue.y);
+            
+            Vector3 moveDirection = new Vector3(PlayerControls.Instance.moveData.moveValue.x, 0, PlayerControls.Instance.moveData.moveValue.y);
+            _moveInput = _controller.GetCameraTransform().forward*moveDirection.z + _controller.GetCameraTransform().right*moveDirection.x;
+            _moveInput.y = 0;
             _movementSpeed = _character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed();
 
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Move(_inputDirection, _movementSpeed);
+            _controller.Move(_moveInput, _movementSpeed);
         }
         public override void LateUpdateState(PlayerStateManager player)
         {
