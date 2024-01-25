@@ -7,5 +7,10 @@ namespace FGJ24.Player
     public class CharacterMoveSpeed
     {
         [SerializeField] private float _moveSpeed;
+        
+        public float GetMoveSpeed()
+        {
+            return _moveSpeed;
+        }
     }
 }

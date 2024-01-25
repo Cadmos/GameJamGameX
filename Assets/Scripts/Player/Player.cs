@@ -7,10 +7,5 @@ namespace FGJ24.Player
     public class Player : MonoBehaviour
     {
         [SerializeField] private PlayerObject _playerObject;
-        
-        private void Awake()
-        {
-            _playerObject = new PlayerObject();
-        }
     }
 }

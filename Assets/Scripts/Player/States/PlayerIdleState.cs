@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace FGJ24.Player
 {
     public class PlayerIdleState : PlayerBaseState
@@ -17,7 +19,11 @@ namespace FGJ24.Player
         }
         public override void UpdateState(PlayerStateManager player)
         {
-            
+            Debug.Log("PlayerIdleState.UpdateState");
+            if (PlayerControls.Instance.moveData.MovePerformed)
+            {
+                player.SwitchState(player.GetPlayerMoveState());
+            }
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
