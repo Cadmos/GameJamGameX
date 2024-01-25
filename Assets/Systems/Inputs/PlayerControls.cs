@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Debug = UnityEngine.Debug;
 
 public class PlayerControls : MonoBehaviour
 {
@@ -8,21 +7,21 @@ public class PlayerControls : MonoBehaviour
     
     private PlayerInputActions _playerActions;
     
-    public MoveData moveData;
-    public LookData lookData;
-    public FireData fireData;
-    public AimData aimData;
-    public InteractData interactData;
-    public JumpData jumpData;
-    public DashData dashData;
-    public StartData startData;
-    public PauseData pauseData;
+    private MoveData _moveData;
+    private LookData _lookData;
+    private FireData _fireData;
+    private AimData _aimData;
+    private InteractData _interactData;
+    private JumpData _jumpData;
+    private DashData _dashData;
+    private StartData _startData;
+    private PauseData _pauseData;
     
-    private MenuDirectionData menuDirectionData;
-    private MenuInteractData menuInteractData;
+    private MenuDirectionData _menuDirectionData;
+    private MenuInteractData _menuInteractData;
     
     
-    public struct MoveData
+    struct MoveData
     {
         public bool MoveStarted;
         public bool MovePerformed;
@@ -30,7 +29,7 @@ public class PlayerControls : MonoBehaviour
         public Vector2 MoveValue;
     }
     
-    public struct LookData
+    struct LookData
     {
         public bool LookStarted;
         public bool LookPerformed;
@@ -38,56 +37,56 @@ public class PlayerControls : MonoBehaviour
         public Vector2 LookValue;
     }
     
-    public struct FireData
+    struct FireData
     {
         public bool FireStarted;
         public bool FirePerformed;
         public bool FireCanceled;
     }
     
-    public struct AimData
+    struct AimData
     {
         public bool AimStarted;
         public bool AimPerformed;
         public bool AimCanceled;
     }
     
-    public struct InteractData
+    struct InteractData
     {
         public bool InteractStarted;
         public bool InteractPerformed;
         public bool InteractCanceled;
     }
     
-    public struct JumpData
+    struct JumpData
     {
         public bool JumpStarted;
         public bool JumpPerformed;
         public bool JumpCanceled;
     }
     
-    public struct DashData
+    struct DashData
     {
         public bool DashStarted;
         public bool DashPerformed;
         public bool DashCanceled;
     }
     
-    public struct StartData
+    struct StartData
     {
         public bool StartStarted;
         public bool StartPerformed;
         public bool StartCanceled;
     }
     
-    public struct PauseData
+    struct PauseData
     {
         public bool PauseStarted;
         public bool PausePerformed;
         public bool PauseCanceled;
     }
     
-    public struct MenuDirectionData
+    struct MenuDirectionData
     {
         public bool MenuDirectionStarted;
         public bool MenuDirectionPerformed;
@@ -95,7 +94,7 @@ public class PlayerControls : MonoBehaviour
         public Vector2 MenuDirectionValue;
     }
     
-    public struct MenuInteractData
+    struct MenuInteractData
     {
         public bool MenuInteractStarted;
         public bool MenuInteractPerformed;
@@ -117,8 +116,6 @@ public class PlayerControls : MonoBehaviour
         }
         
         _playerActions = new PlayerInputActions();
-        
-        EnableControls();
         
         SubscribeControls();
     }
@@ -153,9 +150,9 @@ public class PlayerControls : MonoBehaviour
         _playerActions.Player.Dash.performed += Dash;
         _playerActions.Player.Dash.canceled += Dash;
         
-        _playerActions.Player.Start.started += StartInput;
-        _playerActions.Player.Start.performed += StartInput;
-        _playerActions.Player.Start.canceled += StartInput;
+        _playerActions.Player.Start.started += Start;
+        _playerActions.Player.Start.performed += Start;
+        _playerActions.Player.Start.canceled += Start;
         
         _playerActions.Player.Pause.started += Pause;
         _playerActions.Player.Pause.performed += Pause;
@@ -200,9 +197,9 @@ public class PlayerControls : MonoBehaviour
         _playerActions.Player.Dash.performed -= Dash;
         _playerActions.Player.Dash.canceled -= Dash;
         
-        _playerActions.Player.Start.started -= StartInput;
-        _playerActions.Player.Start.performed -= StartInput;
-        _playerActions.Player.Start.canceled -= StartInput;
+        _playerActions.Player.Start.started -= Start;
+        _playerActions.Player.Start.performed -= Start;
+        _playerActions.Player.Start.canceled -= Start;
         
         _playerActions.Player.Pause.started -= Pause;
         _playerActions.Player.Pause.performed -= Pause;
@@ -249,20 +246,18 @@ public class PlayerControls : MonoBehaviour
     
     private void Move(InputAction.CallbackContext ctx)
     {
-        moveData = new MoveData
+        _moveData = new MoveData
         {
             MoveStarted = ctx.started,
             MovePerformed = ctx.performed,
             MoveCanceled = ctx.canceled,
             MoveValue = ctx.canceled ? Vector2.zero : ctx.ReadValue<Vector2>()
         };
-        
-        Debug.Log(moveData.MoveValue);
     }
 
     private void Look(InputAction.CallbackContext ctx)
     {
-        lookData = new LookData
+        _lookData = new LookData
         {
             LookStarted = ctx.started,
             LookPerformed = ctx.performed,
@@ -274,7 +269,7 @@ public class PlayerControls : MonoBehaviour
 
     private void Fire(InputAction.CallbackContext ctx)
     {
-        fireData = new FireData
+        _fireData = new FireData
         {
             FireStarted = ctx.started,
             FirePerformed = ctx.performed,
@@ -284,7 +279,7 @@ public class PlayerControls : MonoBehaviour
     
     private void Aim(InputAction.CallbackContext ctx)
     {
-        aimData = new AimData
+        _aimData = new AimData
         {
             AimStarted = ctx.started,
             AimPerformed = ctx.performed,
@@ -294,7 +289,7 @@ public class PlayerControls : MonoBehaviour
     
     private void Interact(InputAction.CallbackContext ctx)
     {
-        interactData = new InteractData
+        _interactData = new InteractData
         {
             InteractStarted = ctx.started,
             InteractPerformed = ctx.performed,
@@ -304,7 +299,7 @@ public class PlayerControls : MonoBehaviour
     
     private void Jump(InputAction.CallbackContext ctx)
     {
-        jumpData = new JumpData
+        _jumpData = new JumpData
         {
             JumpStarted = ctx.started,
             JumpPerformed = ctx.performed,
@@ -314,7 +309,7 @@ public class PlayerControls : MonoBehaviour
     
     private void Dash(InputAction.CallbackContext ctx)
     {
-        dashData = new DashData
+        _dashData = new DashData
         {
             DashStarted = ctx.started,
             DashPerformed = ctx.performed,
@@ -322,9 +317,9 @@ public class PlayerControls : MonoBehaviour
         };
     }
     
-    private void StartInput(InputAction.CallbackContext ctx)
+    private void Start(InputAction.CallbackContext ctx)
     {
-        startData = new StartData
+        _startData = new StartData
         {
             StartStarted = ctx.started,
             StartPerformed = ctx.performed,
@@ -334,7 +329,7 @@ public class PlayerControls : MonoBehaviour
     
     private void Pause(InputAction.CallbackContext ctx)
     {
-        pauseData = new PauseData
+        _pauseData = new PauseData
         {
             PauseStarted = ctx.started,
             PausePerformed = ctx.performed,
@@ -344,7 +339,7 @@ public class PlayerControls : MonoBehaviour
     
     private void MenuDirection(InputAction.CallbackContext ctx)
     {
-        menuDirectionData = new MenuDirectionData
+        _menuDirectionData = new MenuDirectionData
         {
             MenuDirectionStarted = ctx.started,
             MenuDirectionPerformed = ctx.performed,
@@ -355,7 +350,7 @@ public class PlayerControls : MonoBehaviour
     
     private void MenuInteract(InputAction.CallbackContext ctx)
     {
-        menuInteractData = new MenuInteractData
+        _menuInteractData = new MenuInteractData
         {
             MenuInteractStarted = ctx.started,
             MenuInteractPerformed = ctx.performed,

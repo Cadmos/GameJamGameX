@@ -6,6 +6,7 @@ namespace FGJ24.Player
     {
         private PlayerCharacter _character;
         private PlayerController _controller;
+
         
         private Vector3 _inputDirection;
         private float _movementSpeed;

@@ -68,6 +68,7 @@ namespace FGJ24.Player
 
         public void LateUpdate()
         {
+            Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
             _currentState.LateUpdateState(this);
         }
         

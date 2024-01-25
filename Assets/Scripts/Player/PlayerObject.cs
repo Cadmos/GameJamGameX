@@ -4,16 +4,10 @@ using UnityEngine;
 namespace FGJ24.Player
 {
     [Serializable]
-    public class PlayerObject : MonoBehaviour
+    public class PlayerObject
     {
         [SerializeField] private PlayerStateManager _playerStateManager;
-
-        private void Awake()
-        {
-            _playerStateManager.InitializeStates();
-        }
-
-
+        
         private void Update()
         {
             _playerStateManager.Update();
