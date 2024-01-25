@@ -15,7 +15,6 @@ namespace FGJ24.Player
         private PlayerMoveState _moveState;
         
         #region Constructors
-        
         #region Get
 
         public PlayerIdleState GetPlayerIdleState()
@@ -29,7 +28,6 @@ namespace FGJ24.Player
 
         
         #endregion
-
         #region Set
 
         public bool SetPlayerIdleState(PlayerIdleState playerIdleState)
@@ -47,12 +45,6 @@ namespace FGJ24.Player
         #endregion
         #endregion
 
-        public PlayerStateManager(PlayerController controller, PlayerCharacter character)
-        {
-            _controller = controller;
-            _character = character;
-        }
-
         public void InitializeStates()
         {
             //Debug.Log("Character State Manager Start");
@@ -65,7 +57,7 @@ namespace FGJ24.Player
 
         public void Update()
         {
-            ////Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
+            Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
             _currentState.UpdateState(this);
         }
 
@@ -84,5 +76,6 @@ namespace FGJ24.Player
             _currentState = state;
             state.EnterState(this);
         }
+        
     }
 }
