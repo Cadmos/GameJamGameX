@@ -43,6 +43,8 @@ GameObject:
   - component: {fileID: 5425133115503046059}
   - component: {fileID: 8321470015660680999}
   - component: {fileID: 6937607269403973019}
+  - component: {fileID: 5765129230403483028}
+  - component: {fileID: 7443957225219056122}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -155,7 +157,10 @@ MonoBehaviour:
           _maxHealth: 100
           _gameOverHealth: 0
         _playerMoveSpeed:
+          _maxMoveSpeed: 3
           _moveSpeed: 2
+          _minMoveSpeed: 0.5
+          _player: {fileID: 7443957225219056122}
         _playerAttackDamage:
           _attackDamage: 10
         _playerInteractionRange:
@@ -165,10 +170,67 @@ MonoBehaviour:
           dashDuration: 0.2
           dashCooldownDuration: 2
         _playerJump:
-          _jumpForce: 10
+          _jumpForce: 4
           _movementDampening: 0.3
           _jumpCooldownDurationAfterLanding: 0.1
           _controllableAirDuration: 5
+          _jumpCurve:
+            serializedVersion: 2
+            m_Curve:
+            - serializedVersion: 3
+              time: 0
+              value: 0
+              inSlope: 0
+              outSlope: 0
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            - serializedVersion: 3
+              time: 1
+              value: 1
+              inSlope: 2
+              outSlope: 2
+              tangentMode: 0
+              weightedMode: 0
+              inWeight: 0
+              outWeight: 0
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+          _jumpCurveDuration: 3
+--- !u!114 &5765129230403483028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3452317068172325746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a9ab2cc9b5324d4c9b36e92abccb13a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maxHealth: 100
+  _currentHealth: 0
+  slider: {fileID: 0}
+--- !u!114 &7443957225219056122
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3452317068172325746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3395a40c165fe4e850f4fd85524678, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerData: {fileID: 5765129230403483028}
+  debuffs: []
+  damageInterval: 0.4
+  healInterval: 0.6
+  playerObject: {fileID: 6937607269403973019}
 --- !u!1 &5663940594618765712
 GameObject:
   m_ObjectHideFlags: 0
