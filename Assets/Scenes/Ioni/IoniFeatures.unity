@@ -1983,8 +1983,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerData: {fileID: 560201248}
   debuffs: []
-  damageInterval: 0.6
-  healInterval: 0.3
+  damageInterval: 0.4
+  healInterval: 0.6
   playerObject: {fileID: 560201247}
 --- !u!1 &575083574
 GameObject:
@@ -5121,8 +5121,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minBurnDamage: 1
-  maxBurnDamage: 2
-  damageInterval: 0.8
+  maxBurnDamage: 3
+  damageInterval: 0.4
 --- !u!114 &1458241169
 MonoBehaviour:
   m_ObjectHideFlags: 0
