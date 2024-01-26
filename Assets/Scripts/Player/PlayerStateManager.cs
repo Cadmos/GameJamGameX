@@ -13,6 +13,8 @@ namespace FGJ24.Player
         
         private PlayerIdleState _idleState;
         private PlayerMoveState _moveState;
+        private PlayerDashState _dashState;
+        
         
         #region Constructors
         #region Get
@@ -24,6 +26,11 @@ namespace FGJ24.Player
         public PlayerMoveState GetPlayerMoveState()
         {
             return _moveState;
+        }
+        
+        public PlayerDashState GetPlayerDashState()
+        {
+            return _dashState;
         }
 
         
@@ -41,6 +48,11 @@ namespace FGJ24.Player
             _moveState = playerMoveState;
             return true;
         }
+        public bool SetPlayerDashState(PlayerDashState playerDashState)
+        {
+            _dashState = playerDashState;
+            return true;
+        }
         
         #endregion
         #endregion
@@ -49,6 +61,7 @@ namespace FGJ24.Player
         {
             _idleState = new PlayerIdleState(_character, _controller);
             _moveState = new PlayerMoveState(_character, _controller);
+            _dashState = new PlayerDashState(_character, _controller);
             
             //TODO better start with state resolving
             SwitchState(_idleState);
@@ -56,7 +69,7 @@ namespace FGJ24.Player
 
         public void Update()
         {
-            //Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
+            Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
             _currentState.UpdateState(this);
         }
 

@@ -22,6 +22,11 @@ namespace FGJ24.Player
             {
                 player.SwitchState(player.GetPlayerMoveState());
             }
+            
+            if (PlayerControls.Instance.dashData.dashPerformed)
+            {
+                player.SwitchState(player.GetPlayerDashState());
+            }
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {

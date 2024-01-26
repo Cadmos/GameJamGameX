@@ -174,6 +174,8 @@ namespace FGJ24.Player
             _playerActions.Menu.MenuInteract.canceled += MenuInteract;
         }
 
+
+        
         private void UnsubscribeControls()
         {
             _playerActions.Player.Move.started -= Move;
@@ -323,7 +325,7 @@ namespace FGJ24.Player
                 dashCanceled = ctx.canceled
             };
         }
-
+        
         private void StartInput(InputAction.CallbackContext ctx)
         {
             startData = new StartData

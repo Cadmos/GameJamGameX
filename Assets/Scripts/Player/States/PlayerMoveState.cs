@@ -18,10 +18,12 @@ namespace FGJ24.Player
         }
         public override void EnterState(PlayerStateManager player)
         {
-            
         }
         public override void UpdateState(PlayerStateManager player)
         {
+            if (PlayerControls.Instance.dashData.dashPerformed)
+                player.SwitchState(player.GetPlayerDashState());
+            
             if (PlayerControls.Instance.moveData.movePerformed == false)
                 player.SwitchState(player.GetPlayerIdleState());
             
@@ -29,6 +31,8 @@ namespace FGJ24.Player
             _moveInput = _controller.GetCameraTransform().forward*moveDirection.z + _controller.GetCameraTransform().right*moveDirection.x;
             _moveInput.y = 0;
             _movementSpeed = _character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed();
+            
+            _controller.SetLastMovementDirection(_moveInput);
 
         }
         public override void FixedUpdateState(PlayerStateManager player)
