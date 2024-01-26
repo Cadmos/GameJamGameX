@@ -6,7 +6,6 @@ namespace FGJ24.Player
     {
         private PlayerCharacter _character;
         private PlayerController _controller;
-
         
         private Vector3 _moveInput;
         private float _movementSpeed;
@@ -24,7 +23,6 @@ namespace FGJ24.Player
             Debug.Log("PlayerDashState.EnterState");
             _dashSpeed = _character.GetPlayerCharacterAttributes().GetPlayerDash().GetDashSpeed();
             _nextDashTime = _controller.GetNextDashTime();
-            _controller.SetDashCooldownDuration(_character.GetPlayerCharacterAttributes().GetPlayerDash().GetDashCooldownDuration());
             _intentToDash = true;
         }
         public override void UpdateState(PlayerStateManager player)

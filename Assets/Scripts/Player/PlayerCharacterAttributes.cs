@@ -11,6 +11,7 @@ namespace FGJ24.Player
         [SerializeField] private CharacterAttackDamage _playerAttackDamage;
         [SerializeField] private CharacterInteractionRange _playerInteractionRange;
         [SerializeField] private CharacterDash _playerDash;
+        [SerializeField] private CharacterJump _playerJump;
         
         public CharacterHealth GetPlayerHealth()
         {
@@ -30,6 +31,11 @@ namespace FGJ24.Player
         public CharacterInteractionRange GetPlayerInteractionRange()
         {
             return _playerInteractionRange;
+        }
+        
+        public CharacterJump GetPlayerJump()
+        {
+            return _playerJump;
         }
 
         public CharacterDash GetPlayerDash()

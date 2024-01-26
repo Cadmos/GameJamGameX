@@ -21,6 +21,9 @@ namespace FGJ24.Player
         }
         public override void UpdateState(PlayerStateManager player)
         {
+            if(PlayerControls.Instance.jumpData.jumpPerformed)
+                player.SwitchState(player.GetPlayerJumpState());
+            
             if (PlayerControls.Instance.dashData.dashPerformed)
                 player.SwitchState(player.GetPlayerDashState());
             

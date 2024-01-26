@@ -14,6 +14,7 @@ namespace FGJ24.Player
         private PlayerIdleState _idleState;
         private PlayerMoveState _moveState;
         private PlayerDashState _dashState;
+        private PlayerJumpState _jumpState;
         
         
         #region Constructors
@@ -31,6 +32,11 @@ namespace FGJ24.Player
         public PlayerDashState GetPlayerDashState()
         {
             return _dashState;
+        }
+        
+        public PlayerJumpState GetPlayerJumpState()
+        {
+            return _jumpState;
         }
 
         
@@ -53,6 +59,11 @@ namespace FGJ24.Player
             _dashState = playerDashState;
             return true;
         }
+        public bool SetPlayerJumpState(PlayerJumpState playerJumpState)
+        {
+            _jumpState = playerJumpState;
+            return true;
+        }
         
         #endregion
         #endregion
@@ -62,6 +73,7 @@ namespace FGJ24.Player
             _idleState = new PlayerIdleState(_character, _controller);
             _moveState = new PlayerMoveState(_character, _controller);
             _dashState = new PlayerDashState(_character, _controller);
+            _jumpState = new PlayerJumpState(_character, _controller);
             
             //TODO better start with state resolving
             SwitchState(_idleState);

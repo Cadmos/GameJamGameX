@@ -18,6 +18,17 @@ namespace FGJ24.Player
         }
         public override void UpdateState(PlayerStateManager player)
         {
+            if (!_controller.IsGrounded())
+            {
+                _controller.SetWasGroundedLastFrame(false);
+                return;
+            }
+
+            if (PlayerControls.Instance.jumpData.jumpPerformed)
+            {
+                player.SwitchState(player.GetPlayerJumpState());
+            }
+            
             if (PlayerControls.Instance.moveData.movePerformed)
             {
                 player.SwitchState(player.GetPlayerMoveState());
