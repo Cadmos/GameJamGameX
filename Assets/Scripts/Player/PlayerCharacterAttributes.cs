@@ -11,8 +11,6 @@ namespace FGJ24.Player
         [SerializeField] private CharacterAttackDamage _playerAttackDamage;
         [SerializeField] private CharacterInteractionRange _playerInteractionRange;
         
-        [SerializeField] private CameraLookSpeed _playerLookSpeed;
-        
         public CharacterHealth GetPlayerHealth()
         {
             return _playerHealth;
@@ -31,11 +29,6 @@ namespace FGJ24.Player
         public CharacterInteractionRange GetPlayerInteractionRange()
         {
             return _playerInteractionRange;
-        }
-        
-        public CameraLookSpeed GetPlayerLookSpeed()
-        {
-            return _playerLookSpeed;
         }
     }
 }
