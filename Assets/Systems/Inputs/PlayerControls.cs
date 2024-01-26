@@ -103,8 +103,7 @@ namespace FGJ24.Player
             public bool menuInteractCanceled;
         }
 
-
-
+        
         void Awake()
         {
             if (Instance == null)
