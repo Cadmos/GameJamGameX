@@ -29,11 +29,9 @@ namespace FGJ24.Pylons
 
         private void Update()
         {
-            if (_isPulsing)
-            {
-                _pulseCollider.radius = _pylon.CurrentValue;
-                graphicalPulse.localScale = new Vector3(1+_pylon.CurrentValue, 1+_pylon.CurrentValue, 1+_pylon.CurrentValue) ;
-            }
+            if (!_isPulsing) return;
+            _pulseCollider.radius = _pylon.CurrentValue;
+            graphicalPulse.localScale = new Vector3(1+_pylon.CurrentValue, 1+_pylon.CurrentValue, 1+_pylon.CurrentValue) ;
         }
     }
 }
