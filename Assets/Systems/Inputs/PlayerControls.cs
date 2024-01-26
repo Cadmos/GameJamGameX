@@ -1,3 +1,4 @@
+using FGJ24.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,7 +22,6 @@ namespace FGJ24.Player
 
         public MenuDirectionData menuDirectionData;
         public MenuInteractData menuInteractData;
-
 
         public struct MoveData
         {
@@ -121,6 +121,11 @@ namespace FGJ24.Player
 
             _playerActions.Player.Enable();
             SubscribeControls();
+        }
+
+        public void SubscribeMenu(GameSceneUI ui)
+        {
+            _playerActions.Player.Start.started += ui.ToggleMenu;
         }
 
         private void SubscribeControls()
