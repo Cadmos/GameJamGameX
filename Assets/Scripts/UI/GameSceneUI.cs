@@ -13,7 +13,7 @@ namespace FGJ24
         [SerializeField] private bool menuVisible;
         [SerializeField] private RectTransform menuLayout;
 
-        private void Awake()
+        private void Start()
         {
             PlayerControls.Instance.SubscribeMenu(this);
         }
