@@ -14,10 +14,10 @@ GameObject:
   - component: {fileID: 5687864612836495379}
   - component: {fileID: 3379714132630041543}
   - component: {fileID: 7622720941317664685}
-  - component: {fileID: 4475422959835570359}
+  - component: {fileID: 6534710714410195920}
   m_Layer: 0
   m_Name: PlayerTomi
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -132,7 +132,7 @@ MonoBehaviour:
           _minMoveSpeed: 1
           _player: {fileID: 7622720941317664685}
         _playerAttackDamage:
-          _attackDamage: 10
+          attackDamage: 10
         _playerInteractionRange:
           _interactionRange: 10
         _playerDash:
@@ -238,7 +238,7 @@ MonoBehaviour:
   damageInterval: 0.4
   healInterval: 0.6
   playerObject: {fileID: 5687864612836495379}
---- !u!114 &4475422959835570359
+--- !u!114 &6534710714410195920
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -247,11 +247,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 214495733362726593}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64937885e04876a41a398cd2d5e43884, type: 3}
+  m_Script: {fileID: 11500000, guid: 53319b4772fabea4a98315e9dae3bde8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gatherablesInRange: []
-  inventory: {fileID: 0}
+  interactablesInRange: []
+  playerControls: {fileID: 0}
+  craftingMenu: {fileID: 0}
 --- !u!1 &1340789156506404731
 GameObject:
   m_ObjectHideFlags: 0
