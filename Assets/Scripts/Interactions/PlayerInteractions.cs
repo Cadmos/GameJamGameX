@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FGJ24.Player;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
 namespace FGJ24.Interactions
@@ -16,6 +18,13 @@ namespace FGJ24.Interactions
     public class PlayerInteractions : MonoBehaviour
     {
         [SerializeField] private List<InteractableData> interactablesInRange;
+
+        [SerializeField] private PlayerControls playerControls;
+
+        private void Start()
+        {
+            playerControls.SubscribeInteraction(this);
+        }
 
         public void RegisterInteractable(Interactable i, Vector3 position)
         {
@@ -34,7 +43,7 @@ namespace FGJ24.Interactions
             return orderedInteractables.First().interactable;
         }
 
-        public void LaunchInteraction()
+        public void LaunchInteraction(InputAction.CallbackContext ctx)
         {
             ClosestInteractable().Interact();
         }

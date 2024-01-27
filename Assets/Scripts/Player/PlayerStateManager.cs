@@ -81,7 +81,7 @@ namespace FGJ24.Player
 
         public void Update()
         {
-            Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
+            //Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
             _currentState.UpdateState(this);
         }
 
