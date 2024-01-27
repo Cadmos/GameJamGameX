@@ -43,7 +43,7 @@ namespace FGJ24
                 _shouldStopMusic  = false;
             }
             
-            if(!_shouldStopMusic && _shouldStartMusic)
+            if (!_shouldStopMusic && _shouldStartMusic)
             {
                 _musicSource.Play();
                 _shouldStartMusic = false;

@@ -6,7 +6,8 @@ namespace FGJ24.Inventory
     public enum ResourceType
     {
         Crystal, 
-        Stone
+        Stone,
+        Mushroom,
     }
     
     [System.Serializable]
@@ -17,18 +18,20 @@ namespace FGJ24.Inventory
 
         public Resource(ResourceType resourceType)
         {
-            this.name = NameForResource(resourceType);
+            name = NameForResource(resourceType);
             resource = resourceType;
         }
 
         private string NameForResource(ResourceType resourceType)
         {
-            switch (resource)
+            switch (resourceType)
             {
                 case ResourceType.Crystal:
                     return "Crystal";
                 case ResourceType.Stone:
-                    return "Crystal";
+                    return "Stone";
+                case ResourceType.Mushroom:
+                    return "Mushroom";
                 default:
                     return "NaN";
             }

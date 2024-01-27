@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FGJ24.Inventory;
 using FGJ24.Player;
+using FGJ24.ScriptableObjects.UICrafting;
+using Ioni;
+using Ioni.Extensions;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -20,6 +24,7 @@ namespace FGJ24.Interactions
         [SerializeField] private List<InteractableData> interactablesInRange;
 
         [SerializeField] private PlayerControls playerControls;
+        [SerializeField] private CraftingMenu craftingMenu;
 
         private void Start()
         {
@@ -29,11 +34,98 @@ namespace FGJ24.Interactions
         public void RegisterInteractable(Interactable i, Vector3 position)
         {
             interactablesInRange.Add(new InteractableData { interactableObjectPosition = position, interactable = i });
+            TrySetCraftingMenuVisible(true);
         }
 
         public void DeregisterInteractable(Interactable i)
         {
-            interactablesInRange.Remove(interactablesInRange.Find(interactable => interactable.interactable == i));
+            var interactable = interactablesInRange.Find(interactable => interactable.interactable == i);
+            TrySetCraftingMenuVisible(false);
+            interactablesInRange.Remove(interactable);
+        }
+
+
+        private void TrySetCraftingMenuVisible(bool visibility)
+        {
+            interactablesInRange.ForEach(i =>
+            {
+                var craftingStation = i.interactable.GetComponent<CraftingStation.CraftingStationTriggerZone>();
+                if (craftingStation != null)
+                {
+                    SetCraftingMenuVisible(visibility);
+                }
+            });
+        }
+
+        public void SetCraftingMenuVisible(bool visible)
+        {
+            craftingMenu.gameObject.SetActive(visible);
+            craftingMenu.ShowCraftingMenu();
+        }
+
+        public void TryCraftRecipe(RecipeBlueprint recipe)
+        {
+            var canCraft = false; 
+            CraftingStation.CraftingStation craftStation = null;
+            interactablesInRange.ForEach(i =>
+            {
+                var craftingStation = i.interactable.GetComponent<CraftingStation.CraftingStationTriggerZone>();
+                if (craftingStation != null)
+                {
+                    canCraft = craftingStation.CraftingStation.HasResourcesFor(recipe);
+                    craftStation = craftingStation.CraftingStation;
+                }
+            });
+
+            if (canCraft && craftStation != null)
+            {
+                CraftRecipe(recipe, craftStation);
+            }
+            else
+            {
+                "Player Trying Craft, but not enough resources".Info(); // TODO - Should be indicated for player
+            }
+        }
+
+        public void CraftRecipe(RecipeBlueprint recipe, CraftingStation.CraftingStation craftStation)
+        {
+            // eat resources
+            var resourcesToRemove = new List<Resource>();
+
+            for (int i = 0; i < recipe.Crystals; i++)
+            {
+                resourcesToRemove.Add(new Resource(ResourceType.Crystal));
+            }
+            
+            for (int i = 0; i < recipe.Stones; i++)
+            {
+                resourcesToRemove.Add(new Resource(ResourceType.Stone));
+            }
+            
+            for (int i = 0; i < recipe.Mushrooms; i++)
+            {
+                resourcesToRemove.Add(new Resource(ResourceType.Mushroom));
+            }
+            
+            craftStation.RemoveResources(resourcesToRemove);
+
+            // giev penefit
+            if (recipe.Id == 0)
+            {
+                
+            }
+            if (recipe.Id == 1)
+            {
+                
+            }
+            if (recipe.Id == 2)
+            {
+                
+            }
+            if (recipe.Id == 3)
+            {
+                
+            }
         }
 
         private Interactable ClosestInteractable()
@@ -45,7 +137,8 @@ namespace FGJ24.Interactions
 
         public void LaunchInteraction(InputAction.CallbackContext ctx)
         {
-            ClosestInteractable().Interact();
+            interactablesInRange.ForEach(i => i.interactable.Interact());
+            //ClosestInteractable().Interact();
         }
     }
 }
