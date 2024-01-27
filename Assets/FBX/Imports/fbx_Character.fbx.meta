@@ -3,7 +3,32 @@ guid: 310a152b78ed7ab4ab804cb5375f9abc
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mtl_Eye_Iris
+    second: {fileID: 2100000, guid: 6b0398cfcbb6bc140a151540f439347e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mtl_Eye_Lens
+    second: {fileID: 2100000, guid: 39a84319df312194a8ca15b9de35fb5d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mtl_Eye_Pupil
+    second: {fileID: 2100000, guid: 73f1079e53228634a8b5f9fb49dedc38, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mtl_Mouse
+    second: {fileID: 2100000, guid: 473eac928d0291b4488b96784900c3d0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mtl_Tools
+    second: {fileID: 2100000, guid: 87eb9a3a2894f5642822f082381b4f4a, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
