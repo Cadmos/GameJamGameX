@@ -137,7 +137,8 @@ namespace FGJ24.Interactions
 
         public void LaunchInteraction(InputAction.CallbackContext ctx)
         {
-            ClosestInteractable().Interact();
+            interactablesInRange.ForEach(i => i.interactable.Interact());
+            //ClosestInteractable().Interact();
         }
     }
 }

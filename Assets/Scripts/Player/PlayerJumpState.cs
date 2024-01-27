@@ -71,7 +71,6 @@ namespace FGJ24.Player
             float curveValue = _jumpCurve.Evaluate(_curveTime);
             
             _momentum = Vector3.Lerp(_moveInput, Vector3.zero, curveValue);
-            Debug.Log("_moveInput: " + _moveInput + " _momentum: " + _momentum);
             _controller.SetLastMovementDirection(_moveInput);
 
         }
@@ -80,7 +79,6 @@ namespace FGJ24.Player
         {
             if (_intentToJump && _controller.IsGrounded())
             {
-                Debug.Log("PlayerJumpState.FixedUpdateState");
                 _controller.Jump(_jumpForce);
                 _intentToJump = false;
             }

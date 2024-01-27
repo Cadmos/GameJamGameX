@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using FGJ24.Inventory;
 using Ioni.Extensions;
@@ -10,6 +11,12 @@ namespace FGJ24.UI
     {
         [SerializeField] private HorizontalLayoutGroup layoutGroup;
         [SerializeField] private GameObject resourcePrefab;
+
+        private void Start()
+        {
+            SetResources(new List<Resource>());
+        }
+
         public void SetResources(List<Resource> resources)
         {
             // First remove everything
