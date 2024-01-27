@@ -1,5 +1,6 @@
 using System;
 using FGJ24.Interactions;
+using FGJ24.Inventory;
 using FGJ24.ScriptableObjects.UICrafting;
 using Ioni.Extensions;
 using TMPro;
@@ -21,6 +22,10 @@ namespace FGJ24.UI
 
         private PlayerInteractions _playerInteractions;
 
+        [SerializeField] private Sprite crystalIcon;
+        [SerializeField] private Sprite stoneIcon;
+        [SerializeField] private Sprite mushroomIcon;
+        
         private void Start()
         {
             _playerInteractions = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInteractions>();
@@ -29,6 +34,21 @@ namespace FGJ24.UI
         public void OnButtonClick()
         {
             _playerInteractions.TryCraftRecipe(recipe);
+        }
+        
+        private Sprite IconFor(ResourceType resourceType)
+        {
+            switch (resourceType)
+            {
+                case ResourceType.Crystal:
+                    return crystalIcon;
+                case ResourceType.Stone:
+                    return stoneIcon;
+                case ResourceType.Mushroom:
+                    return mushroomIcon;
+                default:
+                    return crystalIcon;
+            }
         }
         
         public void SetContents(RecipeBlueprint recipe)
@@ -42,21 +62,21 @@ namespace FGJ24.UI
                 .GetComponent<RecipeResource>();
             if (recipeResource != null)
             {
-                recipeResource.SetContents("Crystals", recipe.Crystals, null);
+                recipeResource.SetContents("Crystals", recipe.Crystals, IconFor(ResourceType.Crystal));
             }
             
             var recipeResource2 = Instantiate(recipeResourcePrefab, resourceRequirements.transform)
                 .GetComponent<RecipeResource>();
             if (recipeResource2 != null)
             {
-                recipeResource2.SetContents("Stones", recipe.Stones, null);
+                recipeResource2.SetContents("Stones", recipe.Stones, IconFor(ResourceType.Stone));
             }
             
             var recipeResource3 = Instantiate(recipeResourcePrefab, resourceRequirements.transform)
                 .GetComponent<RecipeResource>();
             if (recipeResource3 != null)
             {
-                recipeResource3.SetContents("Mushrooms", recipe.Mushrooms, null);
+                recipeResource3.SetContents("Mushrooms", recipe.Mushrooms, IconFor(ResourceType.Mushroom));
             }
         }
     }

@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.34279796, g: 0.8301887, b: 0.05873976, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -161,7 +161,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 1911843721707370173}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
@@ -241,7 +241,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 320, y: 0}
+  m_AnchoredPosition: {x: 357.47, y: 0}
   m_SizeDelta: {x: 400, y: -8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3632165818347951930
@@ -274,15 +274,16 @@ MonoBehaviour:
       m_Calls: []
   m_text: RecipeName
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c6de005db6e60bf45960f3d64c9f16d7, type: 2}
+  m_sharedMaterial: {fileID: -871579949100641025, guid: c6de005db6e60bf45960f3d64c9f16d7,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278190080
-  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+    rgba: 4279205844
+  m_fontColor: {r: 0.83137256, g: 0.49748814, b: 0.058823522, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -299,8 +300,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 54
-  m_fontSizeBase: 54
+  m_fontSize: 72
+  m_fontSizeBase: 72
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -400,6 +401,9 @@ MonoBehaviour:
   resourceRequirements: {fileID: 5827035524385719334}
   recipeResourcePrefab: {fileID: 8668406511220181607, guid: 44e22de2d5657de4a8fd0e9ad2bd2cb9,
     type: 3}
+  crystalIcon: {fileID: 21300000, guid: f5186eeb1076767498d33f5b9c7e1598, type: 3}
+  stoneIcon: {fileID: 21300000, guid: eafb7d95a2bfe4342bca9690e12e7713, type: 3}
+  mushroomIcon: {fileID: 21300000, guid: 4e810a502fa6c2e41826ea60f8dc309c, type: 3}
 --- !u!114 &8200203793285473809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,8 +520,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 54, y: 0}
-  m_SizeDelta: {x: 100, y: -8}
+  m_AnchoredPosition: {x: 68, y: 0}
+  m_SizeDelta: {x: 140, y: 9.999996}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5816969839778761763
 CanvasRenderer:
@@ -540,14 +544,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.6981132, g: 0.5295204, b: 0.30624774, a: 1}
+  m_Color: {r: 0.21603759, g: 0.5188679, b: 0.04160734, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 6f9c7e8a5b2f1d343906dc524427f38a, type: 3}
   m_Type: 0
   m_PreserveAspect: 1
   m_FillCenter: 1

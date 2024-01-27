@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 3
   recipeName: Movement Increase +1
-  recipeIcon: {fileID: 0}
+  recipeIcon: {fileID: 21300000, guid: be98fbf4e1dd9b94c8a97e5f5f91dacf, type: 3}
   crystals: 3
   stones: 3
   mushrooms: 3
-  playerInteractions: {fileID: 1125755153967057203, guid: c3945cb0470357c45887d8c18a68a326,
-    type: 3}

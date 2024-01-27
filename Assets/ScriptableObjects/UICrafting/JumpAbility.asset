@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 2
   recipeName: Jump
-  recipeIcon: {fileID: 0}
+  recipeIcon: {fileID: 21300000, guid: 46385f874e88f274dbffeffff2aa9781, type: 3}
   crystals: 8
   stones: 8
   mushrooms: 5
-  playerInteractions: {fileID: 1125755153967057203, guid: c3945cb0470357c45887d8c18a68a326,
-    type: 3}
