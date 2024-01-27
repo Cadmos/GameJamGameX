@@ -13,5 +13,10 @@ namespace FGJ24.Player
         {
             return _playerCharacterAttributes;
         }
+        
+        public CharacterAnimator GetPlayerAnimator()
+        {
+            return _playerAnimator;
+        }
     }
 }

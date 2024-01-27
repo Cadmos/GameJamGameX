@@ -16,7 +16,6 @@ namespace FGJ24.Player
         private PlayerDashState _dashState;
         private PlayerJumpState _jumpState;
         
-        
         #region Constructors
         #region Get
 
@@ -81,7 +80,7 @@ namespace FGJ24.Player
 
         public void Update()
         {
-            //Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
+            Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
             _currentState.UpdateState(this);
         }
 

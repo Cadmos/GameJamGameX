@@ -13,6 +13,7 @@ namespace FGJ24.Player
         
         [SerializeField] private AnimationCurve _jumpCurve;
         [SerializeField] private float _jumpCurveDuration = 3f;
+        [SerializeField] private float _jumpCooldownAfterJumping = 0.2f;
         
         public float GetJumpForce()
         {
@@ -42,6 +43,11 @@ namespace FGJ24.Player
         public float GetJumpCurveDuration()
         {
             return _jumpCurveDuration;
+        }
+        
+        public float GetJumpCooldownAfterJumping()
+        {
+            return _jumpCooldownAfterJumping;
         }
     }
 }

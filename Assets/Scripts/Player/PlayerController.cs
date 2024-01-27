@@ -56,8 +56,13 @@ namespace FGJ24.Player
         public void Move(Vector3 direction, float movementSpeed)
         {
             _rigidbody.MovePosition(_rigidbody.position + direction * (movementSpeed * Time.deltaTime));
+            //_rigidbody.velocity = direction * (movementSpeed * Time.deltaTime);
         }
 
+        public void StopHorizontalMovement()
+        {
+            _rigidbody.velocity = new Vector3(0, _rigidbody.velocity.y, 0);
+        }
         public void AirMove(Vector3 momentum, Vector3 direction, float speed, float airControl)
         {
             Vector3 targetPosition = _rigidbody.position + momentum + direction * (speed * airControl);
