@@ -13,5 +13,7 @@ namespace FGJ24.CraftingStation
             "Interacting With Crafting Station".Info();
             craftingStation.StartInteractWithCraftStation();
         }
+
+        public CraftingStation CraftingStation => craftingStation;
     }
 }

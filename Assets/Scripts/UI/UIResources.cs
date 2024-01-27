@@ -30,6 +30,14 @@ namespace FGJ24.UI
                 var uiResourceObjectStone = GameObject.Instantiate(resourcePrefab, layoutGroup.transform);
                 uiResourceObjectStone.GetComponent<UIResource>().UpdateContent(ResourceType.Stone, stones.Count);
             }
+            
+            // mushroom
+            var mushrooms = resources.FindAll(r => r.ResourceType == ResourceType.Mushroom);
+            if (mushrooms.Count > 0)
+            {
+                var uiResourceObjectStone = GameObject.Instantiate(resourcePrefab, layoutGroup.transform);
+                uiResourceObjectStone.GetComponent<UIResource>().UpdateContent(ResourceType.Mushroom, mushrooms.Count);
+            }
         }
     }
 }

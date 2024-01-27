@@ -45,10 +45,11 @@ GameObject:
   - component: {fileID: 6937607269403973019}
   - component: {fileID: 5765129230403483028}
   - component: {fileID: 7443957225219056122}
-  - component: {fileID: 1414837941750017899}
+  - component: {fileID: 56099633131491168}
+  - component: {fileID: 1125755153967057203}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -232,7 +233,7 @@ MonoBehaviour:
   damageInterval: 0.4
   healInterval: 0.6
   playerObject: {fileID: 6937607269403973019}
---- !u!114 &1414837941750017899
+--- !u!114 &56099633131491168
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -241,10 +242,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 3452317068172325746}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64937885e04876a41a398cd2d5e43884, type: 3}
+  m_Script: {fileID: 11500000, guid: 238227f76b51c3843824e60d572768f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gatherablesInRange: []
+  CraftingStationInRange: {fileID: 0}
+--- !u!114 &1125755153967057203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3452317068172325746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53319b4772fabea4a98315e9dae3bde8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactablesInRange: []
+  playerControls: {fileID: 0}
+  craftingMenu: {fileID: 0}
 --- !u!1 &5663940594618765712
 GameObject:
   m_ObjectHideFlags: 0
