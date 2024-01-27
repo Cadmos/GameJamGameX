@@ -14,9 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   recipeName: Health +10
-  recipeIcon: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
+  recipeIcon: {fileID: 21300000, guid: a0b6c8878fe0f4d45b7df0f315b27546, type: 3}
   crystals: 2
   stones: 2
   mushrooms: 2
-  playerInteractions: {fileID: 1125755153967057203, guid: c3945cb0470357c45887d8c18a68a326,
-    type: 3}
