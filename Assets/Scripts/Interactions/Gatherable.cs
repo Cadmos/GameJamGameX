@@ -21,7 +21,10 @@ namespace FGJ24.Interactions
 
         public override void Interact()
         {
-            if (ResourceQuantity <= 0) return;
+            if (ResourceQuantity <= 0)
+            {
+                return;
+            }
             _inventory.AddResource(resourceType);
             ResourceQuantity -= 1;
         }
