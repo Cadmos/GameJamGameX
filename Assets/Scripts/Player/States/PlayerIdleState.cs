@@ -16,34 +16,37 @@ namespace FGJ24.Player
 
         public override void EnterState(PlayerStateManager player)
         {
+            _character.GetPlayerAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Idle);
         }
         public override void UpdateState(PlayerStateManager player)
         {
-            if (!_controller.IsGrounded())
+            if (_controller.GetIsGrounded())
             {
-                _controller.SetWasGroundedLastFrame(false);
-                return;
+                Debug.Log("We are grounded");
+                if (PlayerControls.Instance.moveData.movePerformed)
+                {
+                    player.SwitchState(player.GetPlayerMoveState());
+                }
+
+                if (PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time)
+                    player.SwitchState(player.GetPlayerJumpState());
+
+                if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
+                    player.SwitchState(player.GetPlayerDashState());
+                
+                _controller.SetDesiredVelocity(Vector3.zero);
             }
-            
-            if (PlayerControls.Instance.moveData.movePerformed)
+            else
             {
-                player.SwitchState(player.GetPlayerMoveState());
+                //player.SwitchState(player.GetPlayerFallingState());
             }
-            
-            if(PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time)
-                player.SwitchState(player.GetPlayerJumpState());
-            
-            if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
-                player.SwitchState(player.GetPlayerDashState());
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.StopHorizontalMovement();
+            _controller.AdjustVelocityAlongSurface();
         }
         public override void LateUpdateState(PlayerStateManager player)
         {
-            _character.GetPlayerAnimator().Rotate(_controller.GetLastMovementDirection(), _character.GetPlayerCharacterAttributes().GetCharacterTurn().GetTurnSpeed());
-            _character.GetPlayerAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Idle);
         }
     }
 }

@@ -19,6 +19,10 @@ namespace FGJ24.Player
         #region Constructors
         #region Get
 
+        public PlayerController GetController()
+        {
+            return _controller;
+        }
         public PlayerIdleState GetPlayerIdleState()
         {
             return _idleState;
@@ -69,6 +73,7 @@ namespace FGJ24.Player
 
         public void Initialize()
         {
+            _controller.CalculateMinGroundDotProduct();
             _idleState = new PlayerIdleState(_character, _controller);
             _moveState = new PlayerMoveState(_character, _controller);
             _dashState = new PlayerDashState(_character, _controller);
@@ -80,19 +85,33 @@ namespace FGJ24.Player
 
         public void Update()
         {
-            Debug.Log($" Frame {Time.frameCount} Current State {_currentState}");
+            
             _currentState.UpdateState(this);
         }
 
         public void FixedUpdate()
         {
+            
+            _controller.UpdateState();
+            
             _currentState.FixedUpdateState(this);
+            _controller.UpdateRigidBodyVelocity();
+            Debug.Log("currentState" + _currentState + " IsGrounded" + _controller.GetIsGrounded());
+            _controller.ClearState();
         }
 
         public void LateUpdate()
         {
             _currentState.LateUpdateState(this);
-        }
+            
+            if(_controller.GetRigidbodyVelocity().magnitude > 0.1f)
+            {
+                Vector3 horizontalVelocity;
+                horizontalVelocity = new Vector3(_controller.GetRigidbodyVelocity().x, 0, _controller.GetRigidbodyVelocity().z);
+                _character.GetPlayerAnimator().Rotate(horizontalVelocity.normalized, _character.GetPlayerCharacterAttributes().GetCharacterTurn().GetTurnSpeed());
+            }
+
+          }
         
         public void SwitchState(PlayerBaseState state)
         {

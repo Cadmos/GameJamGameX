@@ -11,6 +11,7 @@ namespace FGJ24.Player
         [SerializeField] private float dashCooldownDuration = 1f;
         [SerializeField] private AnimationCurve dashCurve;
         [SerializeField] private float dashCurveDuration = 0.5f;
+        [SerializeField] private float _dashAcceleration = 0.5f;
         
         
         public float GetDashSpeed()
@@ -36,6 +37,11 @@ namespace FGJ24.Player
         public float GetDashCurveDuration()
         {
             return dashCurveDuration;
+        }
+
+        public float GetDashAcceleration()
+        {
+            return _dashAcceleration;
         }
     }
 }

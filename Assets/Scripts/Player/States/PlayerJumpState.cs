@@ -26,6 +26,9 @@ namespace FGJ24.Player
         private bool _intentToJump;
         private bool _weJumped;
 
+        private float _jumpStartTime;
+        
+        
         private bool _isJumping;
         private static readonly int StateEnum = Animator.StringToHash("StateEnum");
 
@@ -37,6 +40,7 @@ namespace FGJ24.Player
         
         public override void EnterState(PlayerStateManager player)
         {
+            _jumpStartTime = Time.time;
             _isJumping = false;
             _jumpCurve = _character.GetPlayerCharacterAttributes().GetPlayerJump().GetJumpCurve();
             _curveDuration = _character.GetPlayerCharacterAttributes().GetPlayerJump().GetJumpCurveDuration();
@@ -47,13 +51,40 @@ namespace FGJ24.Player
             _momentum = _controller.GetRigidbodyVelocity();
             _timeWhenLostControl = Time.time + _character.GetPlayerCharacterAttributes().GetPlayerJump().GetControllableAirDuration();
             _jumpForce = _character.GetPlayerCharacterAttributes().GetPlayerJump().GetJumpForce();
+            _character.GetPlayerAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Jump);
         }
         
         public override void UpdateState(PlayerStateManager player)
         {
+            Vector3 moveDirection = new Vector3(PlayerControls.Instance.moveData.moveValue.x, 0, PlayerControls.Instance.moveData.moveValue.y);
+            _moveInput = _controller.GetCameraTransform().forward * moveDirection.z + _controller.GetCameraTransform().right * moveDirection.x;
+            _moveInput.y = 0;
+            _movementSpeed = _character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed();
+            _controller.SetLastMovementDirection(_moveInput);
+            
+            _controller.SetDesiredVelocity(_moveInput * _movementSpeed);
+                        
+            if (_controller.GetRigidbodyVelocity().y > 0 || _controller.GetIsGrounded() == false || _intentToJump)
+            {
+                return;
+            }
+            
+            if(PlayerControls.Instance.moveData.movePerformed)
+            {
+                player.SwitchState(player.GetPlayerMoveState());
+            }
+            player.SwitchState(player.GetPlayerIdleState());
+
+
+ 
+
+
+            
+            
+            /*
             if (_intentToJump)
             {
-                if (_controller.IsGrounded())
+                if (_controller.GetIsGrounded())
                 {
                     Vector3 moveDirection = new Vector3(PlayerControls.Instance.moveData.moveValue.x, 0, PlayerControls.Instance.moveData.moveValue.y);
                     _moveInput = _controller.GetCameraTransform().forward*moveDirection.z + _controller.GetCameraTransform().right*moveDirection.x;
@@ -98,7 +129,7 @@ namespace FGJ24.Player
                 return;
             }
 
-            if (_controller.IsGrounded())
+            if (_controller.GetIsGrounded())
             {
                 if (PlayerControls.Instance.moveData.movePerformed)
                 {
@@ -131,12 +162,49 @@ namespace FGJ24.Player
                 _controller.SetLastMovementDirection(_moveInput);
                 return;
             }
+            */
             
         }
         
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            if (_intentToJump && _controller.IsGrounded() && _controller.GetNextJumpTime() <= Time.time)
+            _controller.AdjustVelocityAlongSurface();
+            if (_intentToJump)
+            {
+                _intentToJump = false;
+                Vector3 jumpDirection;
+                if (_controller.GetIsGrounded())
+                {
+                    jumpDirection = _controller.GetContactNormal();
+                }
+                else if (_controller.GetIsSteep())
+                {
+                    jumpDirection = _controller.GetSteepNormal();
+                    _controller.SetJumpPhase(0);
+                }
+                else if (_controller.GetMaxAirJumps() > 0 && _controller.GetJumpPhase() <= _controller.GetMaxAirJumps())
+                {
+                    if (_controller.GetJumpPhase() == 0)
+                    {
+                        _controller.SetJumpPhase(1);
+                    }
+
+                    jumpDirection = _controller.GetContactNormal();
+                }
+                else
+                {
+                    player.SwitchState(player.GetPlayerIdleState());
+                    return;
+                }
+
+                _controller.SetNextJumpTime(Time.time + _character.GetPlayerCharacterAttributes().GetPlayerJump().GetJumpCooldownAfterJumping());
+                _controller.Jump2(jumpDirection);
+                
+            }
+
+
+            /*
+            if (_intentToJump && _controller.GetIsGrounded() && _controller.GetNextJumpTime() <= Time.time)
             {
                 Debug.Log("PlayerJumpState.FixedUpdateState");
                 _controller.Jump(_jumpForce);
@@ -145,17 +213,17 @@ namespace FGJ24.Player
                 _intentToJump = false;
                 return;
             }
-            
+
             if(_isJumping)
             {
                 _controller.Move(_momentum, _movementSpeed);
             }
+            */
         }
         
         public override void LateUpdateState(PlayerStateManager player)
         {
-            _character.GetPlayerAnimator().Rotate(_controller.GetLastMovementDirection(), _character.GetPlayerCharacterAttributes().GetCharacterTurn().GetTurnSpeed());
-            _character.GetPlayerAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Jump);
+          
         }
     }
 }

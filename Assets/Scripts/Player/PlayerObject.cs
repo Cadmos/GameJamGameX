@@ -8,6 +8,16 @@ namespace FGJ24.Player
     {
         [SerializeField] private PlayerStateManager _playerStateManager;
 
+        private void OnCollisionEnter(Collision collision)
+        {
+            _playerStateManager.GetController().EvaluateCollisions(collision);
+        }
+
+        private void OnCollisionStay(Collision collision)
+        {
+            _playerStateManager.GetController().EvaluateCollisions(collision);
+        }
+
         private void Awake()
         {
             _playerStateManager.Initialize();
