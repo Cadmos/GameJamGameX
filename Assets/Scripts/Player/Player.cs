@@ -29,6 +29,8 @@ namespace FGJ24.Player
         [SerializeField] private float movementReductionMin;
         [SerializeField] private float movementReductionMax;
         
+        
+        [SerializeField] private float movementIncrease;
         private void Awake()
         {
             _playerData = GetComponent<PlayerData>();
@@ -50,6 +52,26 @@ namespace FGJ24.Player
         {
             if (debuffs.Count > 0) return;
             _playerData.Heal(regenerationAmount);
+        }
+
+        public void Heal(int amount)
+        {
+            _playerData.Heal(amount);
+        }
+
+        public void AddRegen(int amount)
+        {
+            regenerationAmount += amount;
+        }
+        
+        public void AddMaxHealth(int amount)
+        {
+            _playerData.AddMaxHealth(amount);
+        }
+        
+        public void AddMoveSpeed(int amount)
+        {
+            movementIncrease += amount;
         }
 
         private void HealDebuffs()
@@ -93,8 +115,8 @@ namespace FGJ24.Player
             
             if (totalAmount < movementReductionMin) totalAmount = movementReductionMin;
             if (totalAmount > movementReductionMax) totalAmount = movementReductionMax;
-            
-            return totalAmount;
+
+            return totalAmount - movementIncrease;
         }
     }
 }

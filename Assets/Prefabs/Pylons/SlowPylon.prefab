@@ -92,9 +92,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 994f8d4bda44df043b08af289c74cf8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minBurnDamage: 4
-  maxBurnDamage: 8
-  damageInterval: 0.2
+  minBurnDamage: 1
+  maxBurnDamage: 3
+  damageInterval: 0.4
 --- !u!114 &7324270858447467584
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c18663a1b4dec2147be37434efe0ecca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementReduction: 0.1
+  movementReduction: 0.2
 --- !u!1 &4861248450303680851
 GameObject:
   m_ObjectHideFlags: 0
@@ -309,7 +309,7 @@ GameObject:
   - component: {fileID: 2926437186709507772}
   - component: {fileID: 5002339416760947053}
   m_Layer: 0
-  m_Name: BetterPylon
+  m_Name: SlowPylon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -345,7 +345,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2c3e78e03a10184cbcaa77b34f77d79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pylonConfiguration: {fileID: 11400000, guid: 4332e6aeeefc03d48bc17adf0fd27cc3, type: 2}
+  pylonConfiguration: {fileID: 11400000, guid: 038e9e4fb4f212e429563094974b31c3, type: 2}
   currentValue: 0
   time: 0
   growing: 0

@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f099ddce8edbd0c45a5b1929b5180c6c, type: 3}
+  m_Name: DamagePylon
+  m_EditorClassIdentifier: 
+  triggerInterval:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 8.797707
+      value: 40.24031
+      inSlope: -4.2909975
+      outSlope: -4.2909975
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.8874413
+      outWeight: 0.43886417
+    - serializedVersion: 3
+      time: 21.637512
+      value: 81.25052
+      inSlope: -0.06577082
+      outSlope: -0.06577082
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.49486256
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 0
+    m_RotationOrder: 4
+  minDistance: 1.5
+  maxDistance: 4
+  pulseTimeModifier: 0.2
+  pulseTimeModificationRange: {x: 0.3, y: 1.2}

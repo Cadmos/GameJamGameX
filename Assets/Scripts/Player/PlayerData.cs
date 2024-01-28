@@ -46,6 +46,11 @@ namespace FGJ24.Player
             
             slider.value = _currentHealth;
         }
+        
+        public void AddMaxHealth(int amount)
+        {
+            _maxHealth += amount;
+        }
     }
     
     public class IntStat

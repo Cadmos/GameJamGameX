@@ -27,6 +27,7 @@ namespace FGJ24.Interactions
         [SerializeField] private PlayerControls playerControls;
         [SerializeField] private CraftingMenu craftingMenu;
         [SerializeField] private InteractionPanel interactionPanel;
+        [SerializeField] private Player.Player player;
         private void Start()
         {
             playerControls.SubscribeInteraction(this);
@@ -126,19 +127,21 @@ namespace FGJ24.Interactions
             // giev penefit
             if (recipe.Id == 0)
             {
-                
+                // heal
+                player.Heal(1000);
             }
             if (recipe.Id == 1)
             {
-                
+                // Regen
+                player.AddRegen(10);
             }
             if (recipe.Id == 2)
             {
-                
+                player.AddMaxHealth(100);
             }
             if (recipe.Id == 3)
             {
-                
+                player.AddMoveSpeed(1);
             }
         }
 

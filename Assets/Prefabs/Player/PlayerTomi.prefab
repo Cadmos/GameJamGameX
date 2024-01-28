@@ -151,6 +151,7 @@ MonoBehaviour:
           _moveSpeed: 15
           _minMoveSpeed: 1
           _player: {fileID: 7622720941317664685}
+          debugMoveSpeedWithReduction: 0
         _playerAttackDamage:
           attackDamage: 10
         _playerInteractionRange:
@@ -239,7 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a9ab2cc9b5324d4c9b36e92abccb13a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 100
+  _maxHealth: 1000
   _currentHealth: 0
   slider: {fileID: 0}
 --- !u!114 &7622720941317664685
@@ -259,6 +260,11 @@ MonoBehaviour:
   damageInterval: 0.4
   healInterval: 0.6
   playerObject: {fileID: 5687864612836495379}
+  regenerationInterval: 4
+  regenerationAmount: 10
+  movementReductionMin: 0
+  movementReductionMax: 7
+  movementIncrease: 0
 --- !u!114 &6534710714410195920
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -274,6 +280,8 @@ MonoBehaviour:
   interactablesInRange: []
   playerControls: {fileID: 0}
   craftingMenu: {fileID: 0}
+  interactionPanel: {fileID: 0}
+  player: {fileID: 7622720941317664685}
 --- !u!1 &1340789156506404731
 GameObject:
   m_ObjectHideFlags: 0
