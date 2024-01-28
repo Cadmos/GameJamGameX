@@ -11,10 +11,13 @@ namespace FGJ24.Player
         [SerializeField] private float _moveSpeed;
         [SerializeField] private float _minMoveSpeed;
         [SerializeField] private Player _player;
+
+        [SerializeField] private float debugMoveSpeedWithReduction;
         
         public float GetMoveSpeed()
         {
             var currentMoveSpeed = _moveSpeed - _player.GetMovementReduction();
+            debugMoveSpeedWithReduction = currentMoveSpeed;
             return currentMoveSpeed;
         }
     }

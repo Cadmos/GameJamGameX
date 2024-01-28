@@ -11,6 +11,10 @@ namespace FGJ24.Pylons
         private SphereCollider _pulseCollider;
         private bool _isPulsing = false;
         private Pylon _pylon;
+        
+        private Vector3 _startScale = Vector3.zero;
+        [SerializeField] private float scaleModifier;
+        
         private void Awake()
         {
             _pulseCollider = GetComponent<SphereCollider>();
@@ -19,6 +23,7 @@ namespace FGJ24.Pylons
 
         private void Start()
         {
+            _startScale = transform.localScale;
             _isPulsing = true; // TODO - Temporarily enable pulsing
         }
 
@@ -30,8 +35,14 @@ namespace FGJ24.Pylons
         private void Update()
         {
             if (!_isPulsing) return;
-            _pulseCollider.radius = _pylon.CurrentValue;
+            //_pulseCollider.radius = _pylon.CurrentValue;
+            transform.localScale = CalculateScale();
             graphicalPulse.localScale = new Vector3(1+_pylon.CurrentValue, 1+_pylon.CurrentValue, 1+_pylon.CurrentValue) ;
+        }
+
+        private Vector3 CalculateScale()
+        {
+            return _startScale * scaleModifier;
         }
     }
 }

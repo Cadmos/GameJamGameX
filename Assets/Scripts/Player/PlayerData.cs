@@ -23,7 +23,6 @@ namespace FGJ24.Player
 
         public void TakeDamage(int amount)
         {
-            D.Info("Player taking " + amount + " damage");
             _currentHealth -= amount;
 
             if (_currentHealth < 0)
@@ -34,7 +33,18 @@ namespace FGJ24.Player
             }
             
             slider.value = _currentHealth;
+        }
+
+        public void Heal(int amount)
+        {
+            _currentHealth += amount;
+
+            if (_currentHealth > _maxHealth)
+            {
+                slider.value = 1000; // Slider value is fixed atm
+            }
             
+            slider.value = _currentHealth;
         }
     }
     

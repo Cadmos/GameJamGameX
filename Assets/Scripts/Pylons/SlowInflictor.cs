@@ -10,7 +10,7 @@ namespace FGJ24.Pylons
         private Player.Player _playerToSlow;
 
         [SerializeField] private float movementReduction;
-        [SerializeField] private float slowInterval;
+        // [SerializeField] private float slowInterval;
 
         private void TryInflictDebuff()
         {
@@ -23,7 +23,7 @@ namespace FGJ24.Pylons
         private void OnTriggerEnter(Collider other)
         {
             _playerToSlow = other.GetComponent<Player.Player>();
-            InvokeRepeating("TryInflictDebuff", 0.1f, slowInterval);
+            InvokeRepeating("TryInflictDebuff", 0.1f, 0.4f); // property did not affect????
         }
 
         private void OnTriggerExit(Collider other)

@@ -22,6 +22,13 @@ namespace FGJ24.Player
         [SerializeField] private float healInterval;
         
         [SerializeField] private PlayerObject playerObject;
+        
+        [SerializeField] private float regenerationInterval;
+        [SerializeField] private int regenerationAmount;
+        
+        [SerializeField] private float movementReductionMin;
+        [SerializeField] private float movementReductionMax;
+        
         private void Awake()
         {
             _playerData = GetComponent<PlayerData>();
@@ -31,6 +38,7 @@ namespace FGJ24.Player
         {
             InvokeRepeating("TakeDamage", 0.1f, damageInterval);
             InvokeRepeating("HealDebuffs", 0.1f, healInterval);
+            InvokeRepeating("Regenerate", 0.1f, regenerationInterval);
         }
 
         public void InflictDamageDebuff(Debuff debuff)
@@ -38,9 +46,15 @@ namespace FGJ24.Player
             debuffs.Add(debuff);
         }
 
+        private void Regenerate()
+        {
+            if (debuffs.Count > 0) return;
+            _playerData.Heal(regenerationAmount);
+        }
+
         private void HealDebuffs()
         {
-            if (debuffs.Count < 1) return;
+            if (debuffs.Count < 1) return; // Player doesnt have debuffs, no need to heal debuffs
             
             var damageDebuffToHeal = debuffs.Find(d => d.DebuffType == DebuffType.DamageInfliction);
             debuffs.Remove(damageDebuffToHeal);
@@ -77,8 +91,8 @@ namespace FGJ24.Player
                 }
             });
             
-            if (totalAmount < 0.5f) totalAmount = 0.5f;
-            if (totalAmount > 2.5f) totalAmount = 2.5f;
+            if (totalAmount < movementReductionMin) totalAmount = movementReductionMin;
+            if (totalAmount > movementReductionMax) totalAmount = movementReductionMax;
             
             return totalAmount;
         }

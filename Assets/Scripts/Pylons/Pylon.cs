@@ -15,6 +15,7 @@ namespace FGJ24.Pylons
 
         [SerializeField] private bool growing = true;
 
+        [SerializeField] private float timeModifier;
         private void Start()
         {
             time = pylonConfiguration.MinDistance;
@@ -22,7 +23,12 @@ namespace FGJ24.Pylons
 
         public void Update()
         {
-            time += Time.deltaTime * (growing ? -1 : 1);
+            CalculateModifierForTrigger();
+        }
+
+        private void CalculateModifierForTrigger()
+        {
+            time += Time.deltaTime * (growing ? -1 : 1) + timeModifier;
             
             if (time > pylonConfiguration.MaxDistance || time < pylonConfiguration.MinDistance)
             {
