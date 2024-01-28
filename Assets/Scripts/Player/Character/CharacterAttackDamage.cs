@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace FGJ24.Player
 {
     [Serializable]
     public class CharacterAttackDamage
     {
-        [SerializeField] private int _attackDamage = 10;
+        [FormerlySerializedAs("_attackDamage")] [SerializeField] private int attackDamage = 10;
     }
 }

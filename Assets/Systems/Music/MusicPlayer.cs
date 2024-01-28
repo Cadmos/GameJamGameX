@@ -38,15 +38,13 @@ namespace FGJ24
         {
             if (_shouldStopMusic)
             {
-                Debug.Log("Stopping music");
                 _musicSource.Stop();
                 _musicSource.volume = 1f; // Reset volume to original level
                 _shouldStopMusic  = false;
             }
             
-            if(!_shouldStopMusic && _shouldStartMusic)
+            if (!_shouldStopMusic && _shouldStartMusic)
             {
-                Debug.Log("Starting music");
                 _musicSource.Play();
                 _shouldStartMusic = false;
             }
@@ -64,14 +62,12 @@ namespace FGJ24
         private IEnumerator PlayMenuMusicWhenReady()
         {
             // Wait until the current audio clip has finished playing
-            Debug.Log("PlayMenuMusicWhenReady");
             if(_musicSource.isPlaying)
             {
                 StartCoroutine(FadeOutMusic());
             }
             while (_musicSource.isPlaying)
             {
-                Debug.Log("Waiting for music to stop");
                 yield return null;
             }
 
@@ -86,14 +82,12 @@ namespace FGJ24
         private IEnumerator PlayGameMusicWhenReady()
         {
             // Wait until the current audio clip has finished playing
-            Debug.Log("PlayGameMusicWhenReady");
             if(_musicSource.isPlaying)
             {
                 StartCoroutine(FadeOutMusic());
             }
             while (_musicSource.isPlaying)
             {
-                Debug.Log("Waiting for music to stop");
                 yield return null;
             }
 
@@ -110,7 +104,6 @@ namespace FGJ24
 
             while (_musicSource.volume < targetVolume)
             {
-                Debug.Log("Fading in music");
                 _musicSource.volume += Time.deltaTime / _fadeinTime;
 
                 yield return null;
@@ -128,7 +121,6 @@ namespace FGJ24
 
             while (_musicSource.volume > 0)
             {
-                Debug.Log("Fading out music");
                 _musicSource.volume -= startVolume * Time.deltaTime / _fadeoutTime;
 
                 yield return null;

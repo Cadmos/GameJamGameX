@@ -10,7 +10,8 @@ namespace FGJ24.Player
         
         private Vector3 _moveInput;
         private float _movementSpeed;
-        
+        private static readonly int StateEnum = Animator.StringToHash("StateEnum");
+
         public PlayerMoveState(PlayerCharacter character, PlayerController controller)
         {
             _character = character;
@@ -18,29 +19,38 @@ namespace FGJ24.Player
         }
         public override void EnterState(PlayerStateManager player)
         {
+            _character.GetPlayerAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Move);
+            _controller.SetMaxSnapSpeed(_character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed()+8);
         }
         public override void UpdateState(PlayerStateManager player)
         {
-            if(PlayerControls.Instance.jumpData.jumpPerformed)
-                player.SwitchState(player.GetPlayerJumpState());
-            
-            if (PlayerControls.Instance.dashData.dashPerformed)
-                player.SwitchState(player.GetPlayerDashState());
-            
-            if (PlayerControls.Instance.moveData.movePerformed == false)
-                player.SwitchState(player.GetPlayerIdleState());
-            
-            Vector3 moveDirection = new Vector3(PlayerControls.Instance.moveData.moveValue.x, 0, PlayerControls.Instance.moveData.moveValue.y);
-            _moveInput = _controller.GetCameraTransform().forward*moveDirection.z + _controller.GetCameraTransform().right*moveDirection.x;
-            _moveInput.y = 0;
-            _movementSpeed = _character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed();
-            
-            _controller.SetLastMovementDirection(_moveInput);
+            if (_controller.GetIsGrounded())
+            {
+                if (PlayerControls.Instance.moveData.movePerformed == false)
+                {
+                    player.SwitchState(player.GetPlayerIdleState());
+                }
 
+                Vector3 moveDirection = new Vector3(PlayerControls.Instance.moveData.moveValue.x, 0, PlayerControls.Instance.moveData.moveValue.y);
+                _moveInput = _controller.GetCameraTransform().forward * moveDirection.z + _controller.GetCameraTransform().right * moveDirection.x;
+                _moveInput.y = 0;
+                _movementSpeed = _character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed();
+                _controller.SetLastMovementDirection(_moveInput);
+                
+                
+                _controller.SetDesiredVelocity(_moveInput*_character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed());
+
+
+                if (PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time)
+                    player.SwitchState(player.GetPlayerJumpState());
+
+                if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
+                    player.SwitchState(player.GetPlayerDashState());
+            }
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Move(_moveInput, _movementSpeed);
+            _controller.AdjustVelocityAlongSurface();
         }
         public override void LateUpdateState(PlayerStateManager player)
         {

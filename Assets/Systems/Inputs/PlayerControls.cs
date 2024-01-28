@@ -1,3 +1,4 @@
+using FGJ24.Interactions;
 using FGJ24.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -125,6 +126,11 @@ namespace FGJ24.Player
         public void SubscribeMenu(GameSceneUI ui)
         {
             _playerActions.Player.Start.started += ui.ToggleMenu;
+        }
+        
+        public void SubscribeInteraction(PlayerInteractions interactions)
+        {
+            _playerActions.Player.Interact.started += interactions.LaunchInteraction;
         }
 
         private void SubscribeControls()
