@@ -15,6 +15,6 @@ MonoBehaviour:
   id: 4
   recipeName: Laugh Bro, Laugh
   recipeIcon: {fileID: 21300000, guid: 69fe5fb6ca0976243a6554a15955cbda, type: 3}
-  crystals: 2
-  stones: 2
-  mushrooms: 2
+  crystals: 30
+  stones: 30
+  mushrooms: 30

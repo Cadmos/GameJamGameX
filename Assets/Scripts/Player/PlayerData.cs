@@ -1,4 +1,5 @@
 using System;
+using FGJ24.Interactions;
 using Ioni;
 using Ioni.Extensions;
 using UnityEngine;
@@ -28,8 +29,8 @@ namespace FGJ24.Player
             if (_currentHealth < 0)
             {
                 slider.value = 0;
-                "Player Dead".Info();
-                SceneManager.LoadSceneAsync(2);
+                WinSceneParams.Won = false;
+                SceneManager.LoadSceneAsync("TittelScene");
             }
             
             slider.value = _currentHealth;

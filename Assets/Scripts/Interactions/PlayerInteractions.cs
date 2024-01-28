@@ -134,20 +134,20 @@ namespace FGJ24.Interactions
             if (recipe.Id == 0)
             {
                 // heal
-                player.Heal(1000);
+                // player.Heal(1000);
             }
             if (recipe.Id == 1)
             {
                 // Regen
-                player.AddRegen(10);
+                // player.AddRegen(10);
             }
             if (recipe.Id == 2)
             {
-                player.AddMaxHealth(100);
+                // player.AddMaxHealth(100);
             }
             if (recipe.Id == 3)
             {
-                player.AddMoveSpeed(1);
+                // player.AddMoveSpeed(1);
             }
             if (recipe.Id == 4)
             {
