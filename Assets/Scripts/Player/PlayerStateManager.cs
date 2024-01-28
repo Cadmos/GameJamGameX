@@ -97,7 +97,7 @@ namespace FGJ24.Player
             
             _currentState.FixedUpdateState(this);
             _controller.UpdateRigidBodyVelocity();
-            Debug.Log("currentState" + _currentState + " IsGrounded" + _controller.GetIsGrounded());
+            //Debug.Log("currentState" + _currentState + " IsGrounded" + _controller.GetIsGrounded());
             _controller.ClearState();
         }
 

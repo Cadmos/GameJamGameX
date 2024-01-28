@@ -33,6 +33,7 @@ namespace FGJ24.UI
 
         public void OnButtonClick()
         {
+            "B".Info();
             _playerInteractions.TryCraftRecipe(recipe);
         }
         

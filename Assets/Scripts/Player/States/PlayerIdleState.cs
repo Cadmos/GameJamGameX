@@ -22,7 +22,7 @@ namespace FGJ24.Player
         {
             if (_controller.GetIsGrounded())
             {
-                Debug.Log("We are grounded");
+                //Debug.Log("We are grounded");
                 if (PlayerControls.Instance.moveData.movePerformed)
                 {
                     player.SwitchState(player.GetPlayerMoveState());

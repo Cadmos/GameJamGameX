@@ -63,7 +63,7 @@ namespace FGJ24.Player
                 return false;
             }
             float speed = _velocity.magnitude;
-            Debug.Log("speed: " + speed + " _maxSnapSpeed: " + _maxSnapSpeed);
+            //Debug.Log("speed: " + speed + " _maxSnapSpeed: " + _maxSnapSpeed);
             if (speed > _maxSnapSpeed)
             {
                 return false;
@@ -186,8 +186,8 @@ namespace FGJ24.Player
         public void AirMove(Vector3 momentum, Vector3 direction, float speed, float airControl)
         {
             Vector3 targetPosition = _rigidbody.position + momentum + direction * (speed * airControl);
-            Debug.Log("speed: " + speed);
-            Debug.Log("airControl: " + airControl);
+            //Debug.Log("speed: " + speed);
+            //Debug.Log("airControl: " + airControl);
             
             _rigidbody.MovePosition(targetPosition);
         }
@@ -338,7 +338,7 @@ namespace FGJ24.Player
         
         public void EvaluateCollisions(Collision collision)
         {
-            Debug.Log("EvaluateCollisions");
+            //Debug.Log("EvaluateCollisions");
             float minDot = GetMinDot(collision.gameObject.layer);
             for (int i = 0; i < collision.contactCount; i++)
             {

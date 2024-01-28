@@ -9,6 +9,7 @@ using Ioni;
 using Ioni.Extensions;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 namespace FGJ24.Interactions
@@ -18,6 +19,11 @@ namespace FGJ24.Interactions
     {
         public Vector3 interactableObjectPosition;
         public Interactable interactable;
+    }
+
+    public static class WinSceneParams
+    {
+        public static bool Won { get; set; }
     }
     
     public class PlayerInteractions : MonoBehaviour
@@ -142,6 +148,12 @@ namespace FGJ24.Interactions
             if (recipe.Id == 3)
             {
                 player.AddMoveSpeed(1);
+            }
+            if (recipe.Id == 4)
+            {
+                // Win The Game
+                WinSceneParams.Won = true;
+                SceneManager.LoadSceneAsync("TittelScene");
             }
         }
 
