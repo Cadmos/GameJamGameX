@@ -47,3 +47,5 @@ MonoBehaviour:
     m_RotationOrder: 4
   minDistance: 1.5
   maxDistance: 4
+  pulseTimeModifier: 0.2
+  pulseTimeModificationRange: {x: 0.3, y: 1.2}

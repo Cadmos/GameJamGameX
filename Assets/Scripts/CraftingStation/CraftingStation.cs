@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FGJ24.Inventory;
 using FGJ24.ScriptableObjects.UICrafting;
+using FGJ24.UI;
 using Ioni;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace FGJ24.CraftingStation
     {
         [SerializeField] private List<Resource> stashedResources;
         private Inventory.Inventory _inventory;
+        [SerializeField] private CraftingStationInventory uiInventory;
         
         private void Awake()
         {
@@ -20,6 +22,10 @@ namespace FGJ24.CraftingStation
         public void StashResources()
         {
             stashedResources.AddRange(_inventory.Contents);
+            var crystalCount = stashedResources.FindAll(r => r.ResourceType == ResourceType.Crystal).Count;
+            var stoneCount = stashedResources.FindAll(r => r.ResourceType == ResourceType.Stone).Count;
+            var mushroomCount = stashedResources.FindAll(r => r.ResourceType == ResourceType.Mushroom).Count;
+            uiInventory.SetQuantities(crystalCount, stoneCount, mushroomCount);
         }
 
         public void StartInteractWithCraftStation()

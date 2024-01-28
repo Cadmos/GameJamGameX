@@ -4,6 +4,7 @@ using System.Linq;
 using FGJ24.Inventory;
 using FGJ24.Player;
 using FGJ24.ScriptableObjects.UICrafting;
+using FGJ24.UI;
 using Ioni;
 using Ioni.Extensions;
 using UnityEngine;
@@ -25,10 +26,23 @@ namespace FGJ24.Interactions
 
         [SerializeField] private PlayerControls playerControls;
         [SerializeField] private CraftingMenu craftingMenu;
-
+        [SerializeField] private InteractionPanel interactionPanel;
         private void Start()
         {
             playerControls.SubscribeInteraction(this);
+        }
+
+        private void Update()
+        {
+            if (interactablesInRange.Count > 0)
+            {
+                var i = interactablesInRange.First();
+                interactionPanel.ShowInteraction(i.interactable.transform.parent.name, "G");
+            }
+            else
+            {
+                interactionPanel.HideInteraction();
+            }
         }
 
         public void RegisterInteractable(Interactable i, Vector3 position)

@@ -36,8 +36,8 @@ namespace FGJ24.Pylons
         {
             if (!_isPulsing) return;
             //_pulseCollider.radius = _pylon.CurrentValue;
-            transform.localScale = CalculateScale();
-            graphicalPulse.localScale = new Vector3(1+_pylon.CurrentValue, 1+_pylon.CurrentValue, 1+_pylon.CurrentValue) ;
+            // transform.localScale = CalculateScale();
+            transform.localScale = new Vector3(1+_pylon.CurrentValue, 1+_pylon.CurrentValue, 1+_pylon.CurrentValue) ;
         }
 
         private Vector3 CalculateScale()
