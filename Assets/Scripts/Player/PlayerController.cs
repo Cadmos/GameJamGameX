@@ -54,7 +54,7 @@ namespace FGJ24.Player
         [SerializeField] private int _maxAirJumps = 0;
         [SerializeField] private float _nextDashTime;
         [SerializeField] private float _nextJumpTime;
-
+        
 
         public bool SnapToGround()
         {
@@ -63,6 +63,7 @@ namespace FGJ24.Player
                 return false;
             }
             float speed = _velocity.magnitude;
+            Debug.Log("speed: " + speed + " _maxSnapSpeed: " + _maxSnapSpeed);
             if (speed > _maxSnapSpeed)
             {
                 return false;
@@ -330,7 +331,7 @@ namespace FGJ24.Player
             float newX = Mathf.MoveTowards(currentX, _desiredVelocity.x, maxSpeedChange);
             float newZ = Mathf.MoveTowards(currentZ, _desiredVelocity.z, maxSpeedChange);
             
-            _velocity += xAxis * (_desiredVelocity.x - currentX) + zAxis * (_desiredVelocity.z - currentZ);
+            _velocity += xAxis * (newX - currentX) + zAxis * (newZ - currentZ);
         }
         
         
