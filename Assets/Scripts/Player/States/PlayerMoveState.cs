@@ -20,7 +20,7 @@ namespace FGJ24.Player
         public override void EnterState(PlayerStateManager player)
         {
             _character.GetPlayerAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Move);
-            _controller.SetMaxSnapSpeed(_character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed()+1);
+            _controller.SetMaxSnapSpeed(_character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed()+8);
         }
         public override void UpdateState(PlayerStateManager player)
         {

@@ -73,6 +73,7 @@ namespace FGJ24.Player
 
         public void Initialize()
         {
+            _controller.CalculateMinStairsDotProduct();
             _controller.CalculateMinGroundDotProduct();
             _idleState = new PlayerIdleState(_character, _controller);
             _moveState = new PlayerMoveState(_character, _controller);

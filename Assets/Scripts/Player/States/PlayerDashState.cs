@@ -48,7 +48,7 @@ namespace FGJ24.Player
             _intentToDash = true;
             _dashStartTime = Time.time;
             _character.GetPlayerAnimator().GetAnimator().SetFloat(DashAnimationSpeed, 0.667f/_dashDuration);
-            _controller.SetMaxSnapSpeed(_dashSpeed+1);
+            _controller.SetMaxSnapSpeed(_dashSpeed+16);
             
             _character.GetPlayerAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Dash);
         }
