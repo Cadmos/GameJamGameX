@@ -86,7 +86,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.08
+  m_Radius: 0.93
   m_Height: 4.2627277
   m_Direction: 1
   m_Center: {x: 0, y: 2.1313834, z: 0}
@@ -106,18 +106,19 @@ MonoBehaviour:
     _controller:
       _rigidbody: {fileID: 8311014965066916518}
       _cameraTransform: {fileID: 0}
-      _maxGroundAngle: 25
+      _haveWeWon: 0
+      _haveWeLost: 0
+      _maxGroundAngle: 60
       _stairMask:
         serializedVersion: 2
-        m_Bits: 1211
+        m_Bits: 187
       _probeMask:
         serializedVersion: 2
-        m_Bits: 1211
-      _maxStairsAngle: 35
-      _maxSnapSpeed: 21
-      _probeDistance: 4
+        m_Bits: 1083
+      _maxStairsAngle: 75
+      _maxSnapSpeed: 50
+      _probeDistance: 5
       _velocity: {x: 0, y: 0, z: 0}
-      _wasGroundedLastFrame: 0
       _jumpHeight: 8
       _groundContactCount: 0
       _steepContactCount: 0
@@ -128,106 +129,130 @@ MonoBehaviour:
       _stepsSinceLastGrounded: 0
       _stepsSinceLastJump: 0
       _lastMovementDirection: {x: 0, y: 0, z: 0}
-      _dashCooldownTimer: 0
       _desiredVelocity: {x: 0, y: 0, z: 0}
-      _maxAcceleration: 200
-      _maxAirAcceleration: 50
-      _maxAirHorizontalSpeed: 10
-      _maxAirVerticalSpeed: 10
       _jumpPhase: 0
+      _intentToJump: 0
+      _intentToDash: 0
       _maxAirJumps: 0
       _nextDashTime: 0
+      _dashStartTime: 0
+      _landingTime: 0
       _nextJumpTime: 0
     _character:
-      _playerAnimator:
-        _animator: {fileID: 591825344260422964}
-      _playerCharacterAttributes:
-        _playerHealth:
-          _currentHealth: 100
-          _maxHealth: 100
+      _characterAttributes:
+        _characterHealth:
+          _currentHealth: 0
+          _maxHealth: 0
           _gameOverHealth: 0
-        _playerMoveSpeed:
-          _maxMoveSpeed: 12
-          _moveSpeed: 15
+        _characterAttackDamage:
+          attackDamage: 10
+        _characterInteractionRange:
+          _interactionRange: 0
+        _characterIdle:
+          _idleSpeed: 5
+          _idleAcceleration: 100
+          _idleTurningSpeed: 5
+          _idleDuration: 0
+          _idleCooldown: 0
+        _characterMove:
+          _maxMoveSpeed: 15
+          _moveSpeed: 12
+          _acceleration: 25
+          _turnSpeed: 10
           _minMoveSpeed: 1
           _player: {fileID: 7622720941317664685}
-          debugMoveSpeedWithReduction: 0
-        _playerAttackDamage:
-          attackDamage: 10
-        _playerInteractionRange:
-          _interactionRange: 10
-        _playerDash:
-          dashSpeed: 20
-          dashDuration: 0.5
-          dashCooldownDuration: 2
-          dashCurve:
+          _debugMoveSpeedWithReduction: 0
+        _characterDash:
+          _dashSpeed: 25
+          _dashMaxSpeed: 25
+          _initialDashAcceleration: 100
+          _dashAcceleration: 25
+          _dashTurnSpeed: 10
+          _dashDuration: 1
+          _dashCooldownDuration: 2
+          _dashCurve:
             serializedVersion: 2
-            m_Curve:
-            - serializedVersion: 3
-              time: 0
-              value: 0
-              inSlope: 0.0033639034
-              outSlope: 0.0033639034
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0.34444445
-            - serializedVersion: 3
-              time: 0.889332
-              value: 0.2317123
-              inSlope: 0.9053611
-              outSlope: 0.9053611
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0.1048822
-              outWeight: 1
-            - serializedVersion: 3
-              time: 1
-              value: 1
-              inSlope: 12.375445
-              outSlope: 12.375445
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0.06842983
-              outWeight: 0
+            m_Curve: []
             m_PreInfinity: 2
             m_PostInfinity: 2
             m_RotationOrder: 4
-          dashCurveDuration: 0.5
-          _dashAcceleration: 1000
-        _playerJump:
-          _jumpForce: 12
+          _dashCurveDuration: 0.5
+        _characterJump:
+          _jumpHeight: 10
+          _jumpSpeed: 12
+          _jumpAcceleration: 10
+          _jumpCooldownAfterJumping: 0.5
+          _jumpTurnSpeed: 10
+          _fallSpeedThreshold: 20
+          _jumpForce: 10
           _movementDampening: 0.05
-          _jumpCooldownDurationAfterLanding: 0.5
+          _jumpCooldownDurationAfterLanding: 0.1
           _controllableAirDuration: 5
           _jumpCurve:
             serializedVersion: 2
-            m_Curve:
-            - serializedVersion: 3
-              time: 0
-              value: 0
-              inSlope: 0
-              outSlope: 0
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
-            - serializedVersion: 3
-              time: 1
-              value: 1
-              inSlope: 2
-              outSlope: 2
-              tangentMode: 0
-              weightedMode: 0
-              inWeight: 0
-              outWeight: 0
+            m_Curve: []
             m_PreInfinity: 2
             m_PostInfinity: 2
             m_RotationOrder: 4
           _jumpCurveDuration: 3
-          _jumpCooldownAfterJumping: 0.5
-        _playerTurn:
-          _turnSpeed: 20
+        _characterFalling:
+          _fallingSpeed: 12
+          _maxFallingSpeed: 30
+          _fallingAcceleration: 10
+          _fallingTurnSpeed: 10
+          _fallingDuration: 0
+          _fallingCooldown: 0
+        _characterLanding:
+          _landingSpeed: 12
+          _landingAcceleration: 50
+          _landingDuration: 2
+        _characterStopping:
+          _stoppingSpeed: 12
+          _stoppingAcceleration: 50
+          _stoppingTurnSpeed: 10
+          _stoppingDuration: 2
+          _stoppingCooldown: 2
+        _characterSliding:
+          _slidingSpeed: 12
+          _maxSlidingSpeed: 0
+          _slidingAcceleration: 50
+          _slidingTurnSpeed: 50
+        _characterGather:
+          _gatherSpeed: 5
+          _gatherAcceleration: 5
+          _gatherTurnSpeed: 5
+          _gatherDuration: 5
+          _gatherCooldown: 5
+        _characterMine:
+          _mineSpeed: 0
+          _mineAcceleration: 0
+          _mineTurnSpeed: 50
+          _mineDuration: 0
+          _mineCooldown: 0
+        _characterCraft:
+          _craftSpeed: 0
+          _craftAcceleration: 0
+          _craftTurnSpeed: 50
+          _craftDuration: 0
+          _craftCooldown: 0
+        _characterDie:
+          _dieSpeed: 0
+          _dieAcceleration: 0
+          _dieTurnSpeed: 50
+          _dieDuration: 0
+          _dieCooldown: 0
+        _characterWin:
+          _winSpeed: 0
+          _winAcceleration: 0
+          _winTurnSpeed: 0
+          _winDuration: 0
+          _winCooldown: 0
+      _characterAnimator:
+        _animator: {fileID: 591825344260422964}
+        _dashAnimation: {fileID: 1827226128182048838, guid: 0a68b1a400bd2ae41aebdf5557eed63e,
+          type: 3}
+        _jumpAnimation: {fileID: 1827226128182048838, guid: 4690d7ed988457d48b513de6aed281f4,
+          type: 3}
 --- !u!114 &3379714132630041543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1435,7 +1460,7 @@ Animator:
   m_GameObject: {fileID: 7346584361487340620}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 283f1da4035b1674ca6252b7a09d5052, type: 2}
+  m_Controller: {fileID: 9100000, guid: 0dd5e37d793c33b4eadbdac79e51d065, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

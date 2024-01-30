@@ -4,49 +4,92 @@ namespace FGJ24.Player
 {
     public class PlayerIdleState : PlayerBaseState
     {
-        private PlayerCharacter _character;
-        private PlayerController _controller;
-        private static readonly int StateEnum = Animator.StringToHash("StateEnum");
-
-        public PlayerIdleState(PlayerCharacter character, PlayerController controller)
+        public PlayerIdleState(CharacterObject character, PlayerController controller) : base(character, controller)
         {
-            _character = character;
-            _controller = controller;
         }
 
         public override void EnterState(PlayerStateManager player)
         {
-            _character.GetPlayerAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Idle);
+            _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Idle);
         }
+
         public override void UpdateState(PlayerStateManager player)
         {
             if (_controller.GetIsGrounded())
             {
-                //Debug.Log("We are grounded");
+                if (_controller.HaveWeWon())
+                {
+                    player.SwitchState(player.GetPlayerWinState());
+                    return;
+                }
+
+
+                if (_controller.HaveWeLost())
+                {
+                    player.SwitchState(player.GetPlayerDieState());
+                    return;
+                }
+
+
+                if (PlayerControls.Instance.interactData.interactPerformed)
+                {
+                    player.SwitchState(player.GetPlayerGatherState());
+                    return;
+                }
+
+
+                if (PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time)
+                {
+                    player.SwitchState(player.GetPlayerJumpState());
+                    return;
+                }
+
+
+                if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
+                {
+                    player.SwitchState(player.GetPlayerDashState());
+                    return;
+                }
+
+
                 if (PlayerControls.Instance.moveData.movePerformed)
                 {
                     player.SwitchState(player.GetPlayerMoveState());
+                    return;
                 }
 
-                if (PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time)
-                    player.SwitchState(player.GetPlayerJumpState());
 
-                if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
-                    player.SwitchState(player.GetPlayerDashState());
-                
                 _controller.SetDesiredVelocity(Vector3.zero);
+                Debug.Log("Idle and grounded is " + _controller.GetIsGrounded());
+                return;
             }
-            else
+
+            if (_controller.GetIsSteep())
             {
-                //player.SwitchState(player.GetPlayerFallingState());
+                player.SwitchState(player.GetPlayerSlidingState());
+                return;
             }
+
+            player.SwitchState(player.GetPlayerFallingState());
+
+
+
+            //Move, Dash, Jump, Gather, Mine, Craft, Die, Win
         }
+
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocityAlongSurface();
+            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterIdleStats().GetIdleAcceleration(), Vector3.zero);
         }
+
         public override void LateUpdateState(PlayerStateManager player)
         {
+
+        }
+
+        public override void ExitState(PlayerStateManager player)
+        {
+            player.SetPreviousStateEnum(PlayerStateEnum.Idle);
         }
     }
 }

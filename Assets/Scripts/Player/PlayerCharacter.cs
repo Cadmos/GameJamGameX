@@ -1,22 +1,26 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace FGJ24.Player
 {
     [Serializable]
-    public class PlayerCharacter
+    public class CharacterObject
     {
-        [SerializeField] private CharacterAnimator _playerAnimator;
-        [SerializeField] private PlayerCharacterAttributes _playerCharacterAttributes;
-        
-        public PlayerCharacterAttributes GetPlayerCharacterAttributes()
+        [SerializeField] private CharacterAttributes _characterAttributes;
+        [SerializeField] private CharacterAnimator _characterAnimator;
+        public CharacterAttributes GetCharacterAttributes()
         {
-            return _playerCharacterAttributes;
+            return _characterAttributes;
         }
-        
-        public CharacterAnimator GetPlayerAnimator()
+        public CharacterAnimator GetCharacterAnimator()
         {
-            return _playerAnimator;
+            return _characterAnimator;
+        }
+
+        public void RotateCharacter(Vector3 direction, float turnSpeed)
+        {
+            _characterAnimator.Rotate(direction, turnSpeed);
         }
     }
 }

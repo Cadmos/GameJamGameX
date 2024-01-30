@@ -114,7 +114,7 @@ Material:
     - _AlphaClip: 0
     - _AlphaToMask: 0
     - _Blend: 0
-    - _BlendDistance: 9.44
+    - _BlendDistance: 1.31
     - _BlendModePreserveSpecular: 1
     - _BlendNoiseScale: 1
     - _BlendNoiseStrength: 1
@@ -139,7 +139,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
-    - _Smoothness: 0.095
+    - _Smoothness: 0.113
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -153,5 +153,5 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _TerrainSizeOffset: {r: 2000, g: 2000, b: -1000, a: -1000}
+    - _TerrainSizeOffset: {r: 2000, g: 2000, b: 0, a: 0}
   m_BuildTextureStacks: []

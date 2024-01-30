@@ -4,57 +4,79 @@ namespace FGJ24.Player
 {
     public class PlayerMoveState : PlayerBaseState
     {
-        private PlayerCharacter _character;
-        private PlayerController _controller;
-
-        
-        private Vector3 _moveInput;
-        private float _movementSpeed;
-        private static readonly int StateEnum = Animator.StringToHash("StateEnum");
-
-        public PlayerMoveState(PlayerCharacter character, PlayerController controller)
+        public PlayerMoveState(CharacterObject character, PlayerController controller) : base(character, controller)
         {
-            _character = character;
-            _controller = controller;
         }
         public override void EnterState(PlayerStateManager player)
         {
-            _character.GetPlayerAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Move);
-            _controller.SetMaxSnapSpeed(_character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed()+8);
+            _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Move);
+            _controller.SetMaxSnapSpeed(_character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed()+8);
         }
         public override void UpdateState(PlayerStateManager player)
         {
-            if (_controller.GetIsGrounded())
+            if (_controller.GetIsGrounded() || _controller.SnapToGround())
             {
-                if (PlayerControls.Instance.moveData.movePerformed == false)
+                if (_controller.HaveWeWon())
                 {
-                    player.SwitchState(player.GetPlayerIdleState());
+                    player.SwitchState(player.GetPlayerWinState());
+                    return;
                 }
 
-                Vector3 moveDirection = new Vector3(PlayerControls.Instance.moveData.moveValue.x, 0, PlayerControls.Instance.moveData.moveValue.y);
-                _moveInput = _controller.GetCameraTransform().forward * moveDirection.z + _controller.GetCameraTransform().right * moveDirection.x;
-                _moveInput.y = 0;
-                _movementSpeed = _character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed();
-                _controller.SetLastMovementDirection(_moveInput);
-                
-                
-                _controller.SetDesiredVelocity(_moveInput*_character.GetPlayerCharacterAttributes().GetPlayerMoveSpeed().GetMoveSpeed());
+                if (_controller.HaveWeLost())
+                {
+                    player.SwitchState(player.GetPlayerDieState());
+                    return;
+                }
 
+                if (PlayerControls.Instance.interactData.interactPerformed)
+                {
+                    player.SwitchState(player.GetPlayerGatherState());
+                    return;
+                }
 
-                if (PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time)
+                if (PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time && _controller.GetJumpPhase() == 0)
+                {     
                     player.SwitchState(player.GetPlayerJumpState());
+                    return;
+                }
 
                 if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
+                {
                     player.SwitchState(player.GetPlayerDashState());
+                    return;
+                }
+
+                if (PlayerControls.Instance.moveData.movePerformed == false)
+                {
+                    player.SwitchState(player.GetPlayerStoppingState());
+                    return;
+                }
+
+                _controller.UpdateDesiredVelocity(_character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed());
+                
+                return;
             }
+
+            if (_controller.GetIsSteep())
+            {
+                player.SwitchState(player.GetPlayerSlidingState());
+                return;
+            }
+            
+            player.SwitchState(player.GetPlayerFallingState());
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocityAlongSurface();
+            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity());
         }
         public override void LateUpdateState(PlayerStateManager player)
         {
-            
+            _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetTurnSpeed());
+        }
+
+        public override void ExitState(PlayerStateManager player)
+        {
+            player.SetPreviousStateEnum(PlayerStateEnum.Move);
         }
     }
 }
