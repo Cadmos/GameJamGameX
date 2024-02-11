@@ -6,6 +6,7 @@ namespace FGJ24.Player
     [Serializable]
     public class CharacterFallingStats
     {
+        [SerializeField] private float _fallingMoveSpeed;
         [SerializeField] private float _fallingSpeed;
         [SerializeField] private float _maxFallingSpeed;
         [SerializeField] private float _fallingAcceleration;
@@ -14,6 +15,11 @@ namespace FGJ24.Player
         [SerializeField] private float _fallingDuration;
         [SerializeField] private float _fallingCooldown;
 
+        
+        public float GetFallingMoveSpeed()
+        {
+            return _fallingMoveSpeed;
+        }
         public float GetFallingSpeed()
         {
             return _fallingSpeed;

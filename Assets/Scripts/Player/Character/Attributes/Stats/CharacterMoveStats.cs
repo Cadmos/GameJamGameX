@@ -32,5 +32,10 @@ namespace FGJ24.Player
         {
             return _turnSpeed;
         }
+        
+        public float GetMaxMoveSpeed()
+        {
+            return _maxMoveSpeed;
+        }
     }
 }

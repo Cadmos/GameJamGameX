@@ -11,12 +11,13 @@ namespace FGJ24.Player
 
         public override void EnterState(PlayerStateManager player)
         {
+            player.SetCurrentStateEnum(PlayerStateEnum.Stopping);
             _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Stopping);
         }
 
         public override void UpdateState(PlayerStateManager player)
         {
-            _controller.UpdateDesiredVelocity(_character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingSpeed());
+            _controller.UpdateDesiredVelocity(Vector3.zero, _character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingSpeed());
 
             if (_controller.GetIsGrounded())
             {
@@ -79,7 +80,7 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingAcceleration(), Vector3.zero);
+            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingAcceleration(), Vector3.zero, false);
         }
 
         public override void LateUpdateState(PlayerStateManager player)

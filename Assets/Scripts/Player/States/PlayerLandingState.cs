@@ -11,6 +11,7 @@ namespace FGJ24.Player
 
         public override void EnterState(PlayerStateManager player)
         {
+            player.SetCurrentStateEnum(PlayerStateEnum.Landing);
             _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Landing);
             _controller.SetLandingTime(Time.time);
         }
@@ -55,7 +56,7 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterLandingStats().GetLandingAcceleration(), _controller.GetDesiredVelocity());
+            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterLandingStats().GetLandingAcceleration(), _controller.GetDesiredVelocity(),false);
         }
 
         public override void LateUpdateState(PlayerStateManager player)

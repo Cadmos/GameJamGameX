@@ -12,13 +12,14 @@ namespace FGJ24.Player
 
         public override void EnterState(PlayerStateManager player)
         {
+            player.SetCurrentStateEnum(PlayerStateEnum.Jump);
             _controller.SetIntentToJump(true);
             _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Jump);
         }
 
         public override void UpdateState(PlayerStateManager player)
         {
-            _controller.UpdateDesiredVelocity(_character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpSpeed());
+            _controller.UpdateDesiredVelocity(new Vector3(PlayerControls.Instance.moveData.moveValue.x,0, PlayerControls.Instance.moveData.moveValue.y), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpSpeed());
 
             if (_controller.GetIntentToJump())
                 return;
@@ -76,7 +77,7 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpAcceleration(), _controller.GetDesiredVelocity());
+            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpAcceleration(), _controller.GetDesiredVelocity(), false);
             _controller.Jump(_character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpHeight());
             _controller.SetNextJumpTime(Time.time + _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpCooldownAfterJumping());
         }

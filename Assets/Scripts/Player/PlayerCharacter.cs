@@ -22,5 +22,10 @@ namespace FGJ24.Player
         {
             _characterAnimator.Rotate(direction, turnSpeed);
         }
+
+        public void ContactAlignedRotate(Vector3 contactNormal , Vector3 velocity, float turnSpeed)
+        {
+            _characterAnimator.ContactAlignedRotate(contactNormal, velocity, turnSpeed);
+        }
     }
 }

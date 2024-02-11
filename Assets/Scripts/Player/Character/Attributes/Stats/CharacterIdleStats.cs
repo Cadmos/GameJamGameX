@@ -8,7 +8,7 @@ namespace FGJ24.Player
     {
         [SerializeField] private float _idleSpeed;
         [SerializeField] private float _idleAcceleration;
-        [SerializeField] private float _idleTurningSpeed;
+        [SerializeField] private float _idleTurnSpeed;
         
         [SerializeField] private float _idleDuration;
         [SerializeField] private float _idleCooldown;
@@ -23,9 +23,9 @@ namespace FGJ24.Player
             return _idleAcceleration;
         }
         
-        public float GetIdleTurningSpeed()
+        public float GetIdleTurnSpeed()
         {
-            return _idleTurningSpeed;
+            return _idleTurnSpeed;
         }
         
         public float GetIdleDuration()

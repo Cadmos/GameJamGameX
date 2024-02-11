@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace FGJ24.Player
@@ -11,8 +10,8 @@ namespace FGJ24.Player
 
         public override void EnterState(PlayerStateManager player)
         {
+            player.SetCurrentStateEnum(PlayerStateEnum.Sliding);
             _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Sliding);
-            //_controller.SetMaxSnapSpeed(_character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed()+8);
         }
 
         public override void UpdateState(PlayerStateManager player)
@@ -78,13 +77,15 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingAcceleration(), _controller.GetDesiredVelocity());
+            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingAcceleration(), _controller.GetDesiredVelocity(), false);
             _controller.LimitVelocity(_character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed());
         }
 
         public override void LateUpdateState(PlayerStateManager player)
         {
-            _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingTurnSpeed());
+            if(_controller.GetVelocity().x != 0 || _controller.GetVelocity().z != 0)
+                _character.ContactAlignedRotate(_controller.GetSteepNormal(), _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingTurnSpeed());
+            
         }
 
         public override void ExitState(PlayerStateManager player)

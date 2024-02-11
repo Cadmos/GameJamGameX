@@ -9,12 +9,15 @@ namespace FGJ24.Player
         }
         public override void EnterState(PlayerStateManager player)
         {
+            player.SetCurrentStateEnum(PlayerStateEnum.Move);
             _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Move);
-            _controller.SetMaxSnapSpeed(_character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed()+8);
+            //_controller.SetMaxSnapSpeed(_character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed()+8);
         }
         public override void UpdateState(PlayerStateManager player)
         {
-            if (_controller.GetIsGrounded() || _controller.SnapToGround())
+
+            Debug.Log("Move Update _controller.GetIsGrounded() " + _controller.GetIsGrounded() + " _controller.IsSnapping " + _controller.IsSnapping + " _controller.WasGroundedLastFrame " + _controller.WasGroundedLastFrame);
+            if (_controller.WasGroundedLastFrame || _controller.GetIsGrounded())
             {
                 if (_controller.HaveWeWon())
                 {
@@ -52,8 +55,7 @@ namespace FGJ24.Player
                     return;
                 }
 
-                _controller.UpdateDesiredVelocity(_character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed());
-                
+                _controller.UpdateDesiredVelocity(new Vector3(PlayerControls.Instance.moveData.moveValue.x,0, PlayerControls.Instance.moveData.moveValue.y), _character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed());
                 return;
             }
 
@@ -62,16 +64,21 @@ namespace FGJ24.Player
                 player.SwitchState(player.GetPlayerSlidingState());
                 return;
             }
-            
-            player.SwitchState(player.GetPlayerFallingState());
+
+            if (!_controller.GetIsGrounded())
+            {
+                player.SwitchState(player.GetPlayerFallingState());
+            }
+                
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity());
+            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity(), true);
         }
         public override void LateUpdateState(PlayerStateManager player)
         {
-            _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetTurnSpeed());
+            if(_controller.GetVelocity().x != 0f && _controller.GetVelocity().z != 0f)
+                _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetTurnSpeed());
         }
 
         public override void ExitState(PlayerStateManager player)

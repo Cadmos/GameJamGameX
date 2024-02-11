@@ -10,11 +10,14 @@ namespace FGJ24.Player
 
         public override void EnterState(PlayerStateManager player)
         {
+            player.SetCurrentStateEnum(PlayerStateEnum.Falling);
             _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Falling);
         }
 
         public override void UpdateState(PlayerStateManager player)
         {
+            _controller.UpdateDesiredVelocity(new Vector3(PlayerControls.Instance.moveData.moveValue.x,_character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingSpeed(), PlayerControls.Instance.moveData.moveValue.y),_character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingMoveSpeed());
+            
             if (_controller.GetIsGrounded())
             {
                 if(_controller.HaveWeWon())
@@ -38,18 +41,17 @@ namespace FGJ24.Player
                 player.SwitchState(player.GetPlayerSlidingState());
                 return;
             }
-            
-            _controller.SetDesiredVelocity(Vector3.zero);
         }
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingAcceleration(), _controller.GetDesiredVelocity());
-            _controller.LimitVelocity(_character.GetCharacterAttributes().GetCharacterFallingStats().GetMaxFallingSpeed());
+            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingAcceleration(), _controller.GetDesiredVelocity(),false);
+            //_controller.LimitVelocity(_character.GetCharacterAttributes().GetCharacterFallingStats().GetMaxFallingSpeed());
         }
 
         public override void LateUpdateState(PlayerStateManager player)
         {
+            Debug.Log("Falling LateUpdate");
             _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingTurnSpeed());
         }
 

@@ -10,6 +10,7 @@ namespace FGJ24.Player
 
         public override void EnterState(PlayerStateManager player)
         {
+            player.SetCurrentStateEnum(PlayerStateEnum.Idle);
             _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Idle);
         }
 
@@ -60,7 +61,6 @@ namespace FGJ24.Player
 
 
                 _controller.SetDesiredVelocity(Vector3.zero);
-                Debug.Log("Idle and grounded is " + _controller.GetIsGrounded());
                 return;
             }
 
@@ -79,12 +79,13 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterIdleStats().GetIdleAcceleration(), Vector3.zero);
+            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterIdleStats().GetIdleAcceleration(), Vector3.zero, false);
         }
 
         public override void LateUpdateState(PlayerStateManager player)
         {
-
+            if(_controller.GetVelocity().x != 0f && _controller.GetVelocity().z != 0f)
+                _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterIdleStats().GetIdleTurnSpeed());
         }
 
         public override void ExitState(PlayerStateManager player)

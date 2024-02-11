@@ -10,7 +10,8 @@ namespace FGJ24.Player
         [SerializeField] private CharacterObject _character;
 
         private PlayerBaseState _currentState;
-        private PlayerStateEnum _previousState;
+        private PlayerStateEnum _previousStateEnum;
+        private PlayerStateEnum _currentStateEnum;
 
         private PlayerIdleState _idleState;
         private PlayerMoveState _moveState;
@@ -28,19 +29,6 @@ namespace FGJ24.Player
         
         private PlayerDieState _dieState;
         private PlayerWinState _winState;
-
-
-
-
-        
-        
-        
-        
-        
-        
-        private PlayerDashingState _dashingState;
-        private PlayerJumpingState _jumpingState;
-
         
         #region Get
 
@@ -59,9 +47,9 @@ namespace FGJ24.Player
             return _currentState;
         }
         
-        public PlayerStateEnum GetPreviousState()
+        public PlayerStateEnum GetPreviousStateEnum()
         {
-            return _previousState;
+            return _previousStateEnum;
         }
 
         public PlayerIdleState GetPlayerIdleState()
@@ -138,13 +126,13 @@ namespace FGJ24.Player
         {
             _controller.CalculateMinStairsDotProduct();
             _controller.CalculateMinGroundDotProduct();
+            _controller.CalculateMinSteepDotProduct();
 
             _idleState = new PlayerIdleState(_character, _controller);
             _fallingState = new PlayerFallingState(_character, _controller);
             _slidingState = new PlayerSlidingState(_character, _controller);
             _stoppingState = new PlayerStoppingState(_character, _controller);
             _landingState = new PlayerLandingState(_character, _controller);
-
             
             _moveState = new PlayerMoveState(_character, _controller);
             _dashState = new PlayerDashState(_character, _controller);
@@ -162,16 +150,20 @@ namespace FGJ24.Player
 
         public void Update()
         {
-            //Debug.Log("currentStateUpdate" + _currentState + " IsGrounded" + _controller.GetIsGrounded());
+            Debug.Log("currentStateUpdate" + _currentState + " IsGrounded" + _controller.GetIsGrounded());
+            DebugCanvasController.Instance.SetStateText(_currentStateEnum.ToString());
             _currentState.UpdateState(this);
         }
 
         public void FixedUpdate()
         {
+            
+            //Debug.Log("currentStateFixedUpdate" + _currentState + " IsGrounded" + _controller.GetIsGrounded());
             _controller.UpdateState();
             _currentState.FixedUpdateState(this);
             _controller.UpdateRigidBodyVelocity();
             _controller.ClearState();
+            
         }
 
         public void LateUpdate()
@@ -188,9 +180,14 @@ namespace FGJ24.Player
             state.EnterState(this);
         }
 
-        public void SetPreviousStateEnum(PlayerStateEnum previousState)
+        public void SetPreviousStateEnum(PlayerStateEnum previousStateEnum)
         {
-            _previousState = previousState;
+            _previousStateEnum = previousStateEnum;
+        }
+        
+        public void SetCurrentStateEnum(PlayerStateEnum currentState)
+        {
+            _currentStateEnum = currentState;
         }
     }
 }
