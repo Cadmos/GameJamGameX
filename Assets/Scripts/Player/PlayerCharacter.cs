@@ -7,9 +7,9 @@ namespace FGJ24.Player
     [Serializable]
     public class CharacterObject
     {
-        [SerializeField] private CharacterAttributes _characterAttributes;
+        [SerializeField] private PlayerCharacterAttributes _characterAttributes;
         [SerializeField] private CharacterAnimator _characterAnimator;
-        public CharacterAttributes GetCharacterAttributes()
+        public PlayerCharacterAttributes GetCharacterAttributes()
         {
             return _characterAttributes;
         }

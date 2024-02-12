@@ -190,6 +190,42 @@ namespace FGJ24.Player
             
             AdjustVelocityDebug(xAxis, zAxis, velocity, desiredVelocity);
         }
+        
+        
+        public void AdjustVelocity(Vector3 velocity, float acceleration, Vector3 desiredVelocity, bool enableSnap, bool enablePerch)
+        {
+            if(_contactNormal == Vector3.zero)
+            {
+                _contactNormal = desiredVelocity.normalized;
+            }
+            
+            Vector3 xAxis = ProjectOnContactPlane(Vector3.right, _contactNormal).normalized;
+            Vector3 zAxis = ProjectOnContactPlane(Vector3.forward, _contactNormal).normalized;
+
+            float currentX = Vector3.Dot(velocity, xAxis);
+            float currentZ = Vector3.Dot(velocity, zAxis);
+
+            float maxSpeedChange = acceleration * Time.fixedDeltaTime;
+
+
+            if (enableSnap)
+            {
+                desiredVelocity = ProjectOnContactPlane(desiredVelocity, _contactNormal);
+            }
+            else
+            {
+                float newY = Mathf.MoveTowards(velocity.y, desiredVelocity.y, maxSpeedChange);
+                velocity.y = newY;
+            }
+
+            float newX = Mathf.MoveTowards(currentX, desiredVelocity.x, maxSpeedChange);
+            float newZ = Mathf.MoveTowards(currentZ, desiredVelocity.z, maxSpeedChange);
+            
+            velocity += xAxis * (newX - currentX) + zAxis * (newZ - currentZ);
+            _velocity = velocity;
+            
+            AdjustVelocityDebug(xAxis, zAxis, velocity, desiredVelocity);
+        }
 
         private void AdjustVelocityDebug(Vector3 xAxis, Vector3 zAxis, Vector3 velocity, Vector3 desiredVelocity)
         {

@@ -5,7 +5,7 @@ using UnityEngine.Serialization;
 namespace FGJ24.Player
 {
     [Serializable]
-    public class CharacterAttributes
+    public class PlayerCharacterAttributes
     {
         [SerializeField] private CharacterHealth _characterHealth;
         
