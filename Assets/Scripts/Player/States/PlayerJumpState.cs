@@ -77,9 +77,14 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpAcceleration(), _controller.GetDesiredVelocity(), false);
-            _controller.Jump(_character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpHeight());
-            _controller.SetNextJumpTime(Time.time + _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpCooldownAfterJumping());
+            _controller.HorizontalMovement(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpSpeed(), _controller.GetDesiredVelocity(), _controller.GetContactNormal());
+
+            if (_controller.GetIntentToJump()) //TODO this is a bit of a hack, but it works for now
+            {
+                _controller.JumpToHeight(_controller.GetVelocity(),_controller.GetContactNormal(),_character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpHeight());
+                _controller.SetNextJumpTime(Time.time + _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpCooldownAfterJumping());
+                _controller.SetIntentToJump(false);
+            }
         }
         
         public override void LateUpdateState(PlayerStateManager player)

@@ -12818,7 +12818,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1638054676}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.030191459, y: 0.9525437, z: -0.100666046, w: 0.28568408}
+  m_LocalRotation: {x: 0.030191462, y: 0.9525437, z: -0.100666046, w: 0.28568408}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -13772,7 +13772,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744874555}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.024990017, y: 0.95421714, z: -0.08332311, w: 0.28618595}
+  m_LocalRotation: {x: 0.024990018, y: 0.9542172, z: -0.083323106, w: 0.28618598}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -14634,6 +14634,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2101276307}
   m_PrefabAsset: {fileID: 0}
+--- !u!136 &1863329071 stripped
+CapsuleCollider:
+  m_CorrespondingSourceObject: {fileID: 8638320819669265822, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
+    type: 3}
+  m_PrefabInstance: {fileID: 2101276307}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1863899215 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 437707884783186895, guid: 61f4b7ba08ddf174faecb43cea1ee1d1,
@@ -14855,6 +14861,12 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4636301569668042335, guid: d8a663587adb68b44b203cc61f2e0765,
     type: 3}
   m_PrefabInstance: {fileID: 1013067675}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1894833538 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3654435486046520554, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
+    type: 3}
+  m_PrefabInstance: {fileID: 2101276307}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &1899761542 stripped
 Transform:
@@ -16640,7 +16652,7 @@ PrefabInstance:
     - target: {fileID: 8776517788151494086, guid: 13a8bac30e6940546b8c790f74739302,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.024990017
+      value: 0.02499002
       objectReference: {fileID: 0}
     - target: {fileID: 8776517788151494086, guid: 13a8bac30e6940546b8c790f74739302,
         type: 3}
@@ -16650,7 +16662,7 @@ PrefabInstance:
     - target: {fileID: 8776517788151494086, guid: 13a8bac30e6940546b8c790f74739302,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.08332311
+      value: -0.08332313
       objectReference: {fileID: 0}
     - target: {fileID: 8776517788151494086, guid: 13a8bac30e6940546b8c790f74739302,
         type: 3}
@@ -17521,6 +17533,16 @@ PrefabInstance:
       propertyPath: slider
       value: 
       objectReference: {fileID: 2024474815}
+    - target: {fileID: 3978366391741841358, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3978366391741841358, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4203092444480932762, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -17621,6 +17643,16 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5487434598763110562, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
+        type: 3}
+      propertyPath: _nextFrameCapsuleTransform
+      value: 
+      objectReference: {fileID: 1894833538}
+    - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
+        type: 3}
+      propertyPath: _playerStateManager._controller._collider
+      value: 
+      objectReference: {fileID: 1863329071}
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
       propertyPath: _playerStateManager._controller._maxSnapSpeed
@@ -17634,7 +17666,7 @@ PrefabInstance:
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
       propertyPath: _playerStateManager._controller._probeDistance
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
@@ -17839,7 +17871,7 @@ PrefabInstance:
     - target: {fileID: 8638320819669265822, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
       propertyPath: m_Radius
-      value: 0.1
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8638320819669265822, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}

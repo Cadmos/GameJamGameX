@@ -73,7 +73,7 @@ namespace FGJ24.Player
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity(), true);
+            _controller.Move(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity(), _controller.GetContactNormal());
         }
         public override void LateUpdateState(PlayerStateManager player)
         {

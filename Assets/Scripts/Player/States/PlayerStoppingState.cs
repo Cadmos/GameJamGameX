@@ -80,7 +80,7 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingAcceleration(), Vector3.zero, false);
+            _controller.Stopping(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingAcceleration(), Vector3.zero, _controller.GetContactNormal());
         }
 
         public override void LateUpdateState(PlayerStateManager player)

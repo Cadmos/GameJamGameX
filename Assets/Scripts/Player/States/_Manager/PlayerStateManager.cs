@@ -158,10 +158,10 @@ namespace FGJ24.Player
         public void FixedUpdate()
         {
             
-            //Debug.Log("currentStateFixedUpdate" + _currentState + " IsGrounded" + _controller.GetIsGrounded());
-            _controller.UpdateState();
+            Debug.Log("currentStateFixedUpdate" + _currentState + " currentFrame: " + Time.fixedTime);
+            _controller.SaveRigidBody();
             _currentState.FixedUpdateState(this);
-            _controller.UpdateRigidBodyVelocity();
+            _controller.UpdateRigidBody();
             _controller.ClearState();
             
         }

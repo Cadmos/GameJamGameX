@@ -58,8 +58,7 @@ namespace FGJ24.Player
                     player.SwitchState(player.GetPlayerMoveState());
                     return;
                 }
-
-
+                
                 _controller.SetDesiredVelocity(Vector3.zero);
                 return;
             }
@@ -70,16 +69,19 @@ namespace FGJ24.Player
                 return;
             }
 
-            player.SwitchState(player.GetPlayerFallingState());
-
-
-
-            //Move, Dash, Jump, Gather, Mine, Craft, Die, Win
+            if (!_controller.GetIsGrounded())
+            {
+                player.SwitchState(player.GetPlayerFallingState());
+                return;
+            }
+            
+            Debug.LogWarning("for some reason we are not grounded, but we are in idle state. This should not happen.");
+            
         }
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterIdleStats().GetIdleAcceleration(), Vector3.zero, false);
+            _controller.Idle(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterIdleStats().GetIdleAcceleration(), _controller.GetDesiredVelocity(), _controller.GetContactNormal());
         }
 
         public override void LateUpdateState(PlayerStateManager player)
