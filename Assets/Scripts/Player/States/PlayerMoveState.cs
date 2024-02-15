@@ -54,7 +54,7 @@ namespace FGJ24.Player
                     player.SwitchState(player.GetPlayerStoppingState());
                     return;
                 }
-
+                Debug.Log("MoveState update desiredVelocity");
                 _controller.UpdateDesiredVelocity(new Vector3(PlayerControls.Instance.moveData.moveValue.x,0, PlayerControls.Instance.moveData.moveValue.y), _character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed());
                 return;
             }
@@ -73,7 +73,7 @@ namespace FGJ24.Player
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Move(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity(), _controller.GetContactNormal());
+            _controller.Move2(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity());
         }
         public override void LateUpdateState(PlayerStateManager player)
         {
