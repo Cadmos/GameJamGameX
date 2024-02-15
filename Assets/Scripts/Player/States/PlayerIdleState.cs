@@ -16,7 +16,7 @@ namespace FGJ24.Player
 
         public override void UpdateState(PlayerStateManager player)
         {
-            if (_controller.GetIsGrounded())
+            if (_controller.WasGroundedLastFrame || _controller.GetIsGrounded())
             {
                 if (_controller.HaveWeWon())
                 {
@@ -24,13 +24,11 @@ namespace FGJ24.Player
                     return;
                 }
 
-
                 if (_controller.HaveWeLost())
                 {
                     player.SwitchState(player.GetPlayerDieState());
                     return;
                 }
-
 
                 if (PlayerControls.Instance.interactData.interactPerformed)
                 {
@@ -38,20 +36,17 @@ namespace FGJ24.Player
                     return;
                 }
 
-
                 if (PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time)
                 {
                     player.SwitchState(player.GetPlayerJumpState());
                     return;
                 }
 
-
                 if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
                 {
                     player.SwitchState(player.GetPlayerDashState());
                     return;
                 }
-
 
                 if (PlayerControls.Instance.moveData.movePerformed)
                 {
@@ -60,6 +55,7 @@ namespace FGJ24.Player
                 }
                 
                 _controller.SetDesiredVelocity(Vector3.zero);
+                
                 return;
             }
 
@@ -81,7 +77,7 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Idle(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterIdleStats().GetIdleAcceleration(), _controller.GetDesiredVelocity(), _controller.GetContactNormal());
+            _controller.Move(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterIdleStats().GetIdleAcceleration(), _controller.GetDesiredVelocity());
         }
 
         public override void LateUpdateState(PlayerStateManager player)

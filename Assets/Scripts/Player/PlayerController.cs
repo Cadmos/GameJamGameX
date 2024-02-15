@@ -16,7 +16,8 @@ namespace FGJ24.Player
     {
 
         #region Properties
-
+        
+        
         [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private Transform _cameraTransform;
         [SerializeField] private CapsuleCollider _collider;
@@ -214,7 +215,7 @@ namespace FGJ24.Player
             return _stepsSinceLastJump <= 2;
         }
         
-        public void Move2(Vector3 velocity, float acceleration, Vector3 desiredVelocity)
+        public void Move(Vector3 velocity, float acceleration, Vector3 desiredVelocity)
         {
             _stepsSinceLastGrounded += 1;
             _stepsSinceLastJump += 1;
@@ -224,12 +225,25 @@ namespace FGJ24.Player
             {
                 if (_isSnapping)
                 {
-                    _contactNormal = _snapContactNormal;
+                    if (_snapContactNormal != Vector3.zero)
+                    {
+                        _contactNormal = _snapContactNormal;
+                    }
+                    else
+                    {
+                        _contactNormal = Vector3.up;
+                    }
+                    
                     float dot = Vector3.Dot(velocity, _contactNormal);
                     if (dot > 0f) {
                         velocity = (velocity - _contactNormal * dot).normalized * velocity.magnitude;
                     }
                 }
+                if (_contactNormal == Vector3.zero)
+                {
+                    _contactNormal = Vector3.up;
+                }
+                
                 _stepsSinceLastGrounded = 0;
                 if (_stepsSinceLastJump > 1)
                 {
@@ -251,55 +265,18 @@ namespace FGJ24.Player
 
             if(_isSnapping)
             {
-                float groundDistance = Vector3.Dot(_position - _groundHitPoint, _contactNormal);
+                //float groundDistance = Vector3.Dot(_position - _groundHitPoint, _contactNormal);
 
                 // If the character is above the ground, move it downwards
-                if (groundDistance > 0f)
+                if (_distanceFromGround > _stepSmooth)
                 {
-                    _position -= Vector3.down * _stepSmooth;
+                    _position -= Vector3.up * _stepSmooth;
                 }
             }
             AdjustVelocityDebug(velocity, desiredVelocity);
             
             _velocity = velocity;
         }
-        
-        public void Move(Vector3 velocity, float acceleration, Vector3 desiredVelocity, Vector3 contactNormal)
-        {
-            _stepsSinceLastGrounded += 1;
-            _stepsSinceLastJump += 1;
-
-            if (GetIsGrounded() || SnapToGround() || CheckSteepContacts())
-            {
-                if (_isSnapping)
-                {
-                    contactNormal = _snapContactNormal;
-                    velocity = AdjustVelocityForSurfaceContact(velocity, contactNormal, velocity.magnitude, _position, _groundHitPoint);
-                }
-                _stepsSinceLastGrounded = 0;
-                if (_stepsSinceLastJump > 1)
-                {
-                    _jumpPhase = 0;
-                }
-                if (_groundContactCount > 1)
-                    contactNormal.Normalize();
-            }
-            else
-            {
-                contactNormal = Vector3.up;
-            }
-            if(contactNormal == Vector3.zero)
-            {
-                Debug.Log("Contact normal is zero!");
-                contactNormal = desiredVelocity.normalized;
-            }
-            
-            desiredVelocity = ProjectOnContactPlane(desiredVelocity, contactNormal);
-            velocity = HorizontalMovement(velocity, acceleration, desiredVelocity, contactNormal);
-            
-            _velocity = velocity;
-        }
-
 
         public void Jump(Vector3 velocity, float acceleration, Vector3 desiredVelocity, Vector3 contactNormal)
         {
@@ -430,21 +407,30 @@ namespace FGJ24.Player
             float speed = _velocity.magnitude;
             if (speed > _maxSnapSpeed)
                 return false;
-            
+            /*
             if (!Physics.Raycast(_rigidbody.position, Vector3.down, out RaycastHit hit, _probeDistance, _probeMask))
             {
                 Debug.DrawLine( _rigidbody.position, _rigidbody.position + Vector3.down * _probeDistance, Color.red, 10f);
                 return false;
             }
-            /*
-            if(!Physics.CapsuleCast( _rigidbody.position, _rigidbody.position+(Vector3.up*_collider.height), _collider.radius, Vector3.down, out RaycastHit hit, _probeDistance, _probeMask))
-            {
-                Debug.DrawLine( _rigidbody.position, _rigidbody.position + Vector3.down * _probeDistance, Color.red, 10f);
-                Debug.DrawLine( _rigidbody.position, _rigidbody.position + Vector3.up * _collider.height, Color.magenta, 10f);
-                return false;
-            }
             */
             
+            if(!Physics.CapsuleCast( _rigidbody.position +_collider.center - Vector3.up * (_collider.radius), _rigidbody.position - Vector3.up * _collider.radius + Vector3.up * _collider.height, _collider.radius - 0.3f, Vector3.down, out RaycastHit hit, _probeDistance, _probeMask))
+            {
+                Debug.DrawRay(_rigidbody.position +_collider.center - Vector3.up * (_collider.height/2f) + Vector3.up * 0.1f , Vector3.left * _probeDistance, Color.yellow, 10f);
+                Debug.DrawRay(_rigidbody.position +_collider.center + Vector3.up * (_collider.height/2f) - Vector3.up * 0.1f , Vector3.left * _probeDistance, Color.yellow, 10f);
+                
+                Debug.DrawLine( _rigidbody.position, _rigidbody.position + Vector3.down * _probeDistance, Color.red, 10f);
+                Debug.DrawLine( _rigidbody.position, _rigidbody.position + Vector3.up * _collider.height, Color.magenta, 10f);
+                Debug.Log($"PointA { _collider.center - Vector3.up * (_collider.height/2) } PointB { _collider.center + Vector3.up * (_collider.height/2) }");
+                
+                return false;
+            }
+            
+
+            Debug.DrawRay(_collider.center - Vector3.up * (_collider.height/2) , Vector3.left * _probeDistance, Color.yellow, 10f);
+            Debug.DrawRay(_collider.center + Vector3.up * (_collider.height/2) , Vector3.left * _probeDistance, Color.yellow, 10f);
+
             
             Debug.DrawLine( _rigidbody.position, _rigidbody.position + Vector3.up * _collider.height, Color.magenta, 10f);
             Debug.DrawLine( _rigidbody.position, hit.point, Color.green, 10f);
@@ -454,7 +440,6 @@ namespace FGJ24.Player
 
             _isSnapping = true;
             _groundContactCount = 1;
-            Debug.Log("SnapToGround hit.normal: " + hit.normal + " _contactNormal: " + _contactNormal);
             _snapContactNormal = hit.normal;
             
             _distanceFromGround = hit.distance;
@@ -1024,7 +1009,7 @@ namespace FGJ24.Player
 
         public void UpdateRigidBody()
         {
-            _rigidbody.position = _position;
+            _rigidbody.MovePosition(_position);
             _rigidbody.velocity = _velocity;
         }
 

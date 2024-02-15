@@ -17,9 +17,8 @@ namespace FGJ24.Player
 
         public override void UpdateState(PlayerStateManager player)
         {
-            _controller.UpdateDesiredVelocity(Vector3.zero, _character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingSpeed());
 
-            if (_controller.GetIsGrounded())
+            if (_controller.WasGroundedLastFrame ||_controller.GetIsGrounded())
             {
                 if (_controller.HaveWeWon())
                 {
@@ -65,6 +64,8 @@ namespace FGJ24.Player
                     return;
                 }
 
+                _controller.UpdateDesiredVelocity(Vector3.zero, _character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingSpeed());
+
 
                 return;
             }
@@ -75,12 +76,16 @@ namespace FGJ24.Player
                 return;
             }
 
-            player.SwitchState(player.GetPlayerFallingState());
+            if (!_controller.GetIsGrounded() && !_controller.WasGroundedLastFrame)
+            {
+                player.SwitchState(player.GetPlayerFallingState());
+                return;
+            }
         }
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Stopping(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingAcceleration(), Vector3.zero, _controller.GetContactNormal());
+            _controller.Move(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingAcceleration(), _controller.GetDesiredVelocity());
         }
 
         public override void LateUpdateState(PlayerStateManager player)

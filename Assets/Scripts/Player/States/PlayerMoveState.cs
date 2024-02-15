@@ -17,7 +17,7 @@ namespace FGJ24.Player
         {
 
             Debug.Log("Move Update _controller.GetIsGrounded() " + _controller.GetIsGrounded() + " _controller.IsSnapping " + _controller.IsSnapping + " _controller.WasGroundedLastFrame " + _controller.WasGroundedLastFrame);
-            if (_controller.WasGroundedLastFrame || _controller.GetIsGrounded())
+            if (_controller.WasGroundedLastFrame || _controller.GetIsGrounded() || _controller.IsSnapping)
             {
                 if (_controller.HaveWeWon())
                 {
@@ -65,7 +65,7 @@ namespace FGJ24.Player
                 return;
             }
 
-            if (!_controller.GetIsGrounded())
+            if (!_controller.GetIsGrounded() && !_controller.WasGroundedLastFrame && !_controller.IsSnapping)
             {
                 player.SwitchState(player.GetPlayerFallingState());
             }
@@ -73,7 +73,7 @@ namespace FGJ24.Player
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Move2(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity());
+            _controller.Move(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity());
         }
         public override void LateUpdateState(PlayerStateManager player)
         {
