@@ -16,44 +16,33 @@ namespace FGJ24.Player
 
         public override void UpdateState(PlayerStateManager player)
         {
-            
-            if (_controller.GetIsGrounded())
+            if (_controller.GetIsGrounded() || _controller.IsSnapping)
             {
                 if (_controller.HaveWeWon())
                 {
                     player.SwitchState(player.GetPlayerWinState());
                     return;
                 }
-                    
-            
                 if(_controller.HaveWeLost())
                 {
                     player.SwitchState(player.GetPlayerDieState());
                     return;
                 }
-                    
-                
                 if (PlayerControls.Instance.interactData.interactPerformed)
                 {
                     player.SwitchState(player.GetPlayerGatherState());
                     return;
                 }
-                    
-                
                 if (PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time && _controller.GetJumpPhase() == 0)
                 {
                     player.SwitchState(player.GetPlayerJumpState());
                     return;
                 }
-                    
-
                 if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
                 {
                      player.SwitchState(player.GetPlayerDashState());
                     return;
                 }
-                   
-
                 if (PlayerControls.Instance.moveData.movePerformed)
                 {
                      player.SwitchState(player.GetPlayerMoveState());
@@ -66,18 +55,21 @@ namespace FGJ24.Player
             
             if (_controller.GetIsSteep())
             {
-                _controller.SetDesiredVelocity(_controller.GetSteepNormal()*_character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed());
+                _controller.UpdateDesiredVelocity(new Vector3(0, _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed(),0), _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed());
                 return;
             }
 
-
-            
-            player.SwitchState(player.GetPlayerFallingState());
+            if (!_controller.GetIsGrounded())
+            {
+                player.SwitchState(player.GetPlayerFallingState());
+                return;
+            }
+                
         }
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingAcceleration(), _controller.GetDesiredVelocity(), false);
+            _controller.Sliding(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity());
             _controller.LimitVelocity(_character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed());
         }
 

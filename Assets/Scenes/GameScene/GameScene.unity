@@ -14311,7 +14311,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1638054676}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.10509606, y: 0.000000003069042, z: -3.243403e-10, w: 0.9944621}
+  m_LocalRotation: {x: 0.10509607, y: 2.346129e-10, z: -2.479428e-11, w: 0.9944621}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -15087,7 +15087,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1730299313}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.047791805, y: -0.00000001732086, z: 8.287422e-10, w: 0.9988573}
+  m_LocalRotation: {x: 0.047791805, y: 0.000000012426375, z: -5.945583e-10, w: 0.9988573}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -15370,7 +15370,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1744874555}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.076380506, y: 1e-45, z: -0, w: 0.9970788}
+  m_LocalRotation: {x: 0.076380506, y: -3.2633842e-29, z: 4.5789176e-30, w: 0.9970788}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -19901,7 +19901,7 @@ PrefabInstance:
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
       propertyPath: _playerStateManager._controller._stepSmooth
-      value: 0.5
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
@@ -19916,7 +19916,7 @@ PrefabInstance:
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
       propertyPath: _playerStateManager._controller._probeDistance
-      value: 6
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
@@ -19981,7 +19981,7 @@ PrefabInstance:
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
       propertyPath: _playerStateManager._character._characterAttributes._characterMove._acceleration
-      value: 100000
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
@@ -20006,7 +20006,7 @@ PrefabInstance:
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
       propertyPath: _playerStateManager._character._characterAttributes._characterSliding._slidingSpeed
-      value: 25
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
@@ -20026,7 +20026,7 @@ PrefabInstance:
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
       propertyPath: _playerStateManager._character._characterAttributes._characterSliding._maxSlidingSpeed
-      value: 25
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
@@ -20035,7 +20035,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
+      propertyPath: _playerStateManager._character._characterAttributes._characterFalling._fallingAcceleration
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
+        type: 3}
       propertyPath: _playerStateManager._character._characterAttributes._characterSliding._slidingAcceleration
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
+        type: 3}
+      propertyPath: _playerStateManager._character._characterAttributes._characterStopping._stoppingAcceleration
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 5687864612836495379, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
+        type: 3}
+      propertyPath: _playerStateManager._character._characterAttributes._characterFalling._fallingMoveAcceleration
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6534710714410195920, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
@@ -20111,7 +20126,7 @@ PrefabInstance:
     - target: {fileID: 8311014965066916518, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}
       propertyPath: m_CollisionDetection
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8638320819669265822, guid: 3619d25e3cb537e4ab8e2c48da0cf4a7,
         type: 3}

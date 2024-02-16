@@ -65,8 +65,6 @@ namespace FGJ24.Player
                 }
 
                 _controller.UpdateDesiredVelocity(Vector3.zero, _character.GetCharacterAttributes().GetCharacterStoppingStats().GetStoppingSpeed());
-
-
                 return;
             }
 

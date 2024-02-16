@@ -24,31 +24,26 @@ namespace FGJ24.Player
                     player.SwitchState(player.GetPlayerWinState());
                     return;
                 }
-
                 if (_controller.HaveWeLost())
                 {
                     player.SwitchState(player.GetPlayerDieState());
                     return;
                 }
-
                 if (PlayerControls.Instance.interactData.interactPerformed)
                 {
                     player.SwitchState(player.GetPlayerGatherState());
                     return;
                 }
-
                 if (PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time && _controller.GetJumpPhase() == 0)
                 {     
                     player.SwitchState(player.GetPlayerJumpState());
                     return;
                 }
-
                 if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
                 {
                     player.SwitchState(player.GetPlayerDashState());
                     return;
                 }
-
                 if (PlayerControls.Instance.moveData.movePerformed == false)
                 {
                     player.SwitchState(player.GetPlayerStoppingState());

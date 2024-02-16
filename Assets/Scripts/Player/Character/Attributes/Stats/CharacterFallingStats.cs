@@ -10,6 +10,8 @@ namespace FGJ24.Player
         [SerializeField] private float _fallingSpeed;
         [SerializeField] private float _maxFallingSpeed;
         [SerializeField] private float _fallingAcceleration;
+        [SerializeField] private float _fallingMoveAcceleration;
+        
         [SerializeField] private float _fallingTurnSpeed;
 
         [SerializeField] private float _fallingDuration;
@@ -24,31 +26,29 @@ namespace FGJ24.Player
         {
             return _fallingSpeed;
         }
-        
         public float GetMaxFallingSpeed()
         {
             return _maxFallingSpeed;
         }
-
         public float GetFallingAcceleration()
         {
             return _fallingAcceleration;
         }
-        
+        public float GetFallingMoveAcceleration()
+        {
+            return _fallingMoveAcceleration;
+        }
         public float GetFallingTurnSpeed()
         {
             return _fallingTurnSpeed;
         }
-
         public float GetFallingDuration()
         {
             return _fallingDuration;
         }
-        
         public float GetFallingCooldown()
         {
             return _fallingCooldown;
         }
-
     }
 }
