@@ -15,8 +15,6 @@ namespace FGJ24.Player
         }
         public override void UpdateState(PlayerStateManager player)
         {
-
-            Debug.Log("Move Update _controller.GetIsGrounded() " + _controller.GetIsGrounded() + " _controller.IsSnapping " + _controller.IsSnapping + " _controller.WasGroundedLastFrame " + _controller.WasGroundedLastFrame);
             if (_controller.WasGroundedLastFrame || _controller.GetIsGrounded() || _controller.IsSnapping)
             {
                 if (_controller.HaveWeWon())
@@ -49,7 +47,6 @@ namespace FGJ24.Player
                     player.SwitchState(player.GetPlayerStoppingState());
                     return;
                 }
-                Debug.Log("MoveState update desiredVelocity");
                 _controller.UpdateDesiredVelocity(new Vector3(PlayerControls.Instance.moveData.moveValue.x,0, PlayerControls.Instance.moveData.moveValue.y), _character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed());
                 return;
             }
@@ -73,7 +70,7 @@ namespace FGJ24.Player
         public override void LateUpdateState(PlayerStateManager player)
         {
             if(_controller.GetVelocity().x != 0f && _controller.GetVelocity().z != 0f)
-                _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetTurnSpeed());
+                _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetTurnSpeed(),_controller.GetUpAxis());
         }
 
         public override void ExitState(PlayerStateManager player)

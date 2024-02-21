@@ -75,7 +75,8 @@ namespace FGJ24.Player
 
         public override void LateUpdateState(PlayerStateManager player)
         {
-            _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingTurnSpeed());
+            //_character.RootRotateCharacter(_controller.GetTargetRotation());
+            _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingTurnSpeed(), _controller.GetUpAxis());
         }
 
         public override void ExitState(PlayerStateManager player)

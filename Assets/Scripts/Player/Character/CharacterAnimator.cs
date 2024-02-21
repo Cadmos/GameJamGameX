@@ -13,6 +13,8 @@ namespace FGJ24.Player
         
         [SerializeField] private AnimationClip _dashAnimation;
         [SerializeField] private AnimationClip _jumpAnimation;
+
+        private Quaternion _lastValidTargetRotation;
         
         
         public AnimationClip GetDashAnimation()
@@ -30,12 +32,52 @@ namespace FGJ24.Player
             return _animator;
         }
         
-        public void Rotate(float3 direction, float turnSpeed)
+        public void RootRotation(Quaternion targetRotation)
         {
-            float3 horizontalVelocity = new float3(direction.x, 0, direction.z);
-            var targetRotation = Quaternion.LookRotation(horizontalVelocity);
+            _animator.rootRotation = targetRotation;
+        }
+        public void Rotate2(Vector3 direction, float turnSpeed, Vector3 upAxis)
+        {
+            Vector3 horizontalVelocity = new Vector3(direction.x, 0, direction.z);
+            var targetRotation = Quaternion.LookRotation(horizontalVelocity, upAxis);
             _animator.transform.rotation = Quaternion.Lerp(_animator.transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
         }
+
+        private void RotateY(Vector3 upAxis, float turnSpeed)
+        {
+            Quaternion upAxisAlignment = Quaternion.FromToRotation(_animator.transform.up, upAxis);
+            _animator.transform.rotation = Quaternion.Lerp(_animator.transform.rotation, upAxisAlignment * _animator.transform.rotation, turnSpeed * Time.deltaTime);
+        }
+
+        private void RotateXZ(Vector3 direction, float turnSpeed)
+        {
+            Vector3 horizontalVelocity = new Vector3(direction.x, 0, direction.z);
+            Quaternion targetRotation = Quaternion.LookRotation(horizontalVelocity, _animator.transform.up);
+            _animator.transform.rotation = Quaternion.Lerp(_animator.transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+        }
+
+        public void Rotate3(Vector3 direction, float turnSpeed, Vector3 upAxis)
+        {
+            Vector3 horizontalVelocity = new Vector3(direction.x, 0, direction.z);
+    
+            // Check if there is horizontal velocity
+            if (horizontalVelocity.magnitude > 0.01f) // Use a small threshold instead of comparing to zero
+            {
+                // Calculate target rotation based on horizontal velocity
+                _lastValidTargetRotation = Quaternion.LookRotation(horizontalVelocity, upAxis);
+            }
+    
+            // Apply rotation
+            _animator.transform.rotation = Quaternion.Lerp(_animator.transform.rotation, _lastValidTargetRotation, turnSpeed * Time.deltaTime);
+        }
+        public void Rotate(Vector3 direction, float turnSpeed, Vector3 upAxis)
+        {
+            RotateY(upAxis, turnSpeed);
+            RotateXZ(direction, turnSpeed);
+        }
+        
+        
+        
         /*
         public void ContactAlignedRotate(float3 contactNormal, float3 direction, float turnSpeed)
         {

@@ -1,5 +1,7 @@
 using System;
+using FGJ24.CustomPhysics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace FGJ24.Player
 {
@@ -7,10 +9,21 @@ namespace FGJ24.Player
     public class PlayerController
     {
         #region Properties
-        [SerializeField] private Rigidbody _rigidbody;
-        [SerializeField] private Transform _cameraTransform;
-        [SerializeField] private CapsuleCollider _collider;
+
+        [SerializeField] private Rigidbody _rigidbody, _connectedRigidbody, _previousConnectedRigidbody;
         
+        
+        [SerializeField] private Transform _cameraTransform;
+        [SerializeField] private Transform _playerInputSpace = default;
+        [SerializeField] private CapsuleCollider _collider;
+        [SerializeField] private Transform _upAxisTransform;
+        [SerializeField] private Quaternion _gravityAlignment = Quaternion.identity;
+        [SerializeField] private float _upAlignmentSpeed = 360f;
+        [SerializeField] private Vector3 _gravity;
+
+        [SerializeField] private Vector3 _upAxis, _rightAxis, _forwardAxis;
+        [SerializeField] private Quaternion _targetRotation;
+
         [SerializeField] private bool _haveWeWon;
         [SerializeField] private bool _haveWeLost;
 
@@ -24,8 +37,8 @@ namespace FGJ24.Player
 
         [SerializeField] private float _maxSnapSpeed = 100f;
         [SerializeField] private float _probeDistance = 1f;
-        [SerializeField] private Vector3 _velocity;
-        [SerializeField] private Vector3 _position;
+        [SerializeField] private Vector3 _velocity, _desiredVelocity, _connectionVelocity;
+        [SerializeField] private Vector3 _position, _connectionWorldPosition, _connectionLocalPosition;
 
         public bool WasGroundedLastFrame => _stepsSinceLastGrounded <= 1;
         public bool IsGrounded => _groundContactCount > 0;
@@ -46,8 +59,6 @@ namespace FGJ24.Player
         [SerializeField] private int _stepsSinceLastGrounded;
         [SerializeField] private int _stepsSinceLastJump;
 
-        [SerializeField] private Vector3 _desiredVelocity;
-
         [SerializeField] private int _jumpPhase;
         [SerializeField] private bool _intentToJump;
         [SerializeField] private bool _intentToDash;
@@ -59,117 +70,202 @@ namespace FGJ24.Player
         [SerializeField] private float _distanceFromGround;
         [SerializeField] private float _stepSmooth = 0.2f;
         [SerializeField] private Vector3 _snapContactNormal;
+
+
         #endregion
+
+        public void SetUpAxisTransform(Transform upAxisTransform)
+        {
+            _upAxisTransform = upAxisTransform;
+        }
+
+        public void SetTargetRotation(Quaternion targetRotation)
+        {
+            _targetRotation = targetRotation;
+        }
+
+        public Quaternion GetTargetRotation()
+        {
+            return _targetRotation;
+        }
+
+        public void SetUpAxis(Vector3 upAxis)
+        {
+            _upAxis = upAxis;
+        }
+
+        public Vector3 GetUpAxis()
+        {
+            return _upAxis;
+        }
+
+        public void SetRightAxis(Vector3 rightAxis)
+        {
+            _rightAxis = rightAxis;
+        }
+
+        public Vector3 GetRightAxis()
+        {
+            return _rightAxis;
+        }
+
+        public void SetForwardAxis(Vector3 forwardAxis)
+        {
+            _forwardAxis = forwardAxis;
+        }
+
+        public Vector3 GetForwardAxis()
+        {
+            return _forwardAxis;
+        }
+
+        public float GetMinSteepDotProduct()
+        {
+            return _minSteepDotProduct;
+        }
+
+        void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(_position + _collider.center - _upAxis * (_collider.radius), _collider.radius);
+            Gizmos.DrawWireSphere(_position - _upAxis * _collider.radius + _upAxis * _collider.height, _collider.radius);
+            Debug.DrawLine(_position, _position + -_upAxis * _probeDistance, Color.red, 10f);
+            Debug.DrawLine(_position, _position + _upAxis * _collider.height, Color.magenta, 10f);
+        }
 
         public void Falling(Vector3 velocity, float horizontalAcceleration, float verticalAcceleration, Vector3 desiredVelocity)
         {
             _stepsSinceLastGrounded += 1;
             _stepsSinceLastJump += 1;
-            
+
             if (GetIsGrounded() || CheckSteepContacts())
             {
                 if (_contactNormal == Vector3.zero)
                 {
-                    _contactNormal = Vector3.up;
+                    _contactNormal = _upAxis;
                 }
+
                 _stepsSinceLastGrounded = 0;
                 if (_stepsSinceLastJump > 1)
                 {
                     _jumpPhase = 0;
                 }
+
                 if (_groundContactCount > 1)
                     _contactNormal.Normalize();
             }
             else
             {
-                _contactNormal = Vector3.up;
+                _contactNormal = _upAxis;
             }
 
             velocity = HorizontalMovement(velocity, horizontalAcceleration, desiredVelocity, _contactNormal);
-            velocity = VerticalMovement(velocity, verticalAcceleration, desiredVelocity.y, _contactNormal);
-            
+            //velocity = VerticalMovement(velocity, verticalAcceleration, desiredVelocity.y, _contactNormal);
+
+            velocity += _gravity * Time.deltaTime;
             _velocity = velocity;
         }
+
+
+        public void AlignCollider()
+        {
+            _collider.transform.rotation = Quaternion.LookRotation(_forwardAxis, _upAxis);
+        }
+
         public void Move(Vector3 velocity, float acceleration, Vector3 desiredVelocity)
         {
             _stepsSinceLastGrounded += 1;
             _stepsSinceLastJump += 1;
-            
+
             //are we on an actionable surface?
             if (GetIsGrounded() || SnapToGround() || CheckSteepContacts())
             {
                 if (_isSnapping)
                 {
-                    _contactNormal = _snapContactNormal != Vector3.zero ? _snapContactNormal : Vector3.up;
-                    
+                    _contactNormal = _snapContactNormal != Vector3.zero ? _snapContactNormal : _upAxis;
                     float dot = Vector3.Dot(velocity, _contactNormal);
-                    if (dot > 0f) {
+                    if (dot > 0f)
+                    {
                         velocity = (velocity - _contactNormal * dot).normalized * velocity.magnitude;
                     }
                 }
+
                 if (_contactNormal == Vector3.zero)
                 {
-                    _contactNormal = Vector3.up;
+                    _contactNormal = _upAxis;
                 }
-                
+
                 _stepsSinceLastGrounded = 0;
                 if (_stepsSinceLastJump > 1)
                 {
                     _jumpPhase = 0;
                 }
+
                 if (_groundContactCount > 1)
                     _contactNormal.Normalize();
             }
             else
             {
-                _contactNormal = Vector3.up;
+                _contactNormal = _upAxis;
+            }
+            
+            if (_connectedRigidbody) {
+                if (_connectedRigidbody.isKinematic || _connectedRigidbody.mass >= _rigidbody.mass) {
+                    UpdateConnectionState();
+                }
             }
 
             velocity = HorizontalMovement(velocity, acceleration, desiredVelocity, _contactNormal);
 
-            if(_isSnapping)
+            if (_isSnapping)
             {
                 if (_distanceFromGround > _stepSmooth)
                 {
-                    _position -= Vector3.up * _stepSmooth;
+                    _position -= _upAxis * _stepSmooth;
                 }
             }
+            
+
+
             AdjustVelocityDebug(velocity, desiredVelocity);
+            velocity += _gravity * Time.deltaTime;
             _velocity = velocity;
         }
+
         public void Sliding(Vector3 velocity, float acceleration, Vector3 desiredVelocity)
         {
             _stepsSinceLastGrounded += 1;
             _stepsSinceLastJump += 1;
-            
+
             if (GetIsGrounded() || CheckSteepContacts())
             {
                 if (_contactNormal == Vector3.zero)
                 {
-                    _contactNormal = Vector3.up;
+                    _contactNormal = _upAxis;
                 }
-                
+
                 _stepsSinceLastGrounded = 0;
                 if (_stepsSinceLastJump > 1)
                 {
                     _jumpPhase = 0;
                 }
+
                 if (_groundContactCount > 1)
                     _contactNormal.Normalize();
             }
             else
             {
-                _contactNormal = Vector3.up;
+                _contactNormal = _upAxis;
             }
-            
+
             velocity = HorizontalMovement(velocity, acceleration, desiredVelocity, _contactNormal);
-            velocity = VerticalMovement(velocity, acceleration, desiredVelocity.y, _contactNormal);
-            
+            //velocity = VerticalMovement(velocity, acceleration, desiredVelocity.y, _contactNormal);
+
             AdjustVelocityDebug(velocity, desiredVelocity);
+            velocity += _gravity * Time.deltaTime;
             _velocity = velocity;
         }
-        
-        
+
         public void Jump(Vector3 velocity, float acceleration, Vector3 desiredVelocity, Vector3 contactNormal)
         {
             _stepsSinceLastGrounded += 1;
@@ -188,10 +284,12 @@ namespace FGJ24.Player
             }
             else
             {
-                contactNormal = Vector3.up;
+                contactNormal = _upAxis;
             }
+
             HorizontalMovement(velocity, acceleration, desiredVelocity, contactNormal);
         }
+
         public void JumpToHeight(Vector3 velocity, Vector3 contactNormal, float jumpHeight)
         {
             if (_intentToJump)
@@ -223,8 +321,8 @@ namespace FGJ24.Player
 
                 _stepsSinceLastJump = 0;
                 _jumpPhase += 1;
-                float jumpSpeed = Mathf.Sqrt(-2f * Physics.gravity.y * jumpHeight);
-                jumpDirection = (jumpDirection + Vector3.up).normalized;
+                float jumpSpeed = Mathf.Sqrt(-2f * Physics.gravity.magnitude * jumpHeight);
+                jumpDirection = (jumpDirection + _upAxis).normalized;
                 float alignedSpeed = Vector3.Dot(velocity, jumpDirection);
 
                 if (alignedSpeed > 0f)
@@ -232,25 +330,31 @@ namespace FGJ24.Player
                     jumpSpeed = Mathf.Max(jumpSpeed - alignedSpeed, 0f);
                 }
 
-                _velocity += Vector3.up * jumpSpeed;
+                _velocity += _upAxis * jumpSpeed;
             }
         }
-        
+
         public void EvaluateCollisions(Collision collision)
         {
             float minDot = GetMinDot(collision.gameObject.layer);
             for (int i = 0; i < collision.contactCount; i++)
             {
                 Vector3 normal = collision.GetContact(i).normal;
-                if (normal.y >= minDot)
+                float upDot = Vector3.Dot(_upAxis, normal);
+                if (upDot >= minDot)
                 {
                     _groundContactCount += 1;
                     _contactNormal += normal;
+                    _connectedRigidbody = collision.rigidbody;
                 }
-                else if (normal.y > -0.01f)
+                else if (upDot > -0.01f)
                 {
                     _steepContactCount += 1;
                     _steepNormal += normal;
+                    if (_groundContactCount == 0)
+                    {
+                        _connectedRigidbody = collision.rigidbody;
+                    }
                 }
             }
         }
@@ -264,26 +368,33 @@ namespace FGJ24.Player
             if (speed > _maxSnapSpeed)
                 return false;
 
-            if(!Physics.CapsuleCast( _position +_collider.center - Vector3.up * (_collider.radius), _position - Vector3.up * _collider.radius + Vector3.up * _collider.height, _collider.radius - 0.3f, Vector3.down, out RaycastHit hit, _probeDistance, _probeMask))
+            if (!Physics.CapsuleCast(_position + _upAxis * _collider.center.y - _upAxis * (_collider.radius),
+                    _position - _upAxis * _collider.radius + _upAxis * _collider.height,
+                    _collider.radius,
+                    -_upAxis,
+                    out RaycastHit hit, _probeDistance, _probeMask))
             {
-                Debug.DrawRay(_position +_collider.center - Vector3.up * (_collider.radius) , Vector3.left * _probeDistance, Color.yellow, 10f);
-                Debug.DrawRay(_position - Vector3.up * _collider.radius + Vector3.up * _collider.height , Vector3.left * _probeDistance, Color.yellow, 10f);
-                Debug.DrawLine( _position, _position + Vector3.down * _probeDistance, Color.red, 10f);
-                Debug.DrawLine( _position, _position + Vector3.up * _collider.height, Color.magenta, 10f);
+                Debug.DrawRay(_position + _upAxis * _collider.center.y - _upAxis * (_collider.radius), _rightAxis * _probeDistance, Color.yellow, 10f);
+                Debug.DrawRay(_position - _upAxis * _collider.radius + _upAxis * _collider.height, _rightAxis * _probeDistance, Color.yellow, 10f);
+                Debug.DrawLine(_position, _position + -_upAxis * _probeDistance, Color.red, 10f);
+                Debug.DrawLine(_position, _position + _upAxis * _collider.height, Color.magenta, 10f);
                 return false;
             }
-            Debug.DrawRay(_position +_collider.center - Vector3.up * (_collider.radius) , Vector3.left * _probeDistance, Color.yellow, 10f);
-            Debug.DrawRay(_position - Vector3.up * _collider.radius + Vector3.up * _collider.height , Vector3.left * _probeDistance, Color.yellow, 10f);
-            Debug.DrawLine( _position, _position + Vector3.up * _collider.height, Color.magenta, 10f);
-            Debug.DrawLine( _position, hit.point, Color.green, 10f);
-            
-            if(GroundCheck(hit.normal.y, hit.collider.gameObject.layer))
+
+            Debug.DrawRay(_position + _upAxis * _collider.center.y - _upAxis * (_collider.radius), _rightAxis * _probeDistance, Color.yellow, 10f);
+            Debug.DrawRay(_position - _upAxis * _collider.radius + _upAxis * _collider.height, _rightAxis * _probeDistance, Color.yellow, 10f);
+            Debug.DrawLine(_position, _position + _upAxis * _collider.height, Color.magenta, 10f);
+            Debug.DrawLine(_position, hit.point, Color.green, 10f);
+
+
+            if (GroundCheck(_upAxis, hit.normal, hit.collider.gameObject.layer))
                 return false;
 
             _isSnapping = true;
             _groundContactCount = 1;
             _snapContactNormal = hit.normal;
             _distanceFromGround = hit.distance;
+            _connectedRigidbody = hit.rigidbody;
             return true;
         }
 
@@ -294,23 +405,22 @@ namespace FGJ24.Player
                 Debug.Log("SteepCheck True");
                 return true;
             }
+
             Debug.Log("SteepCheck False");
             return false;
         }
 
-        public float GetMinSteepDotProduct()
+        public bool GroundCheck(Vector3 upAxis, Vector3 hitNormal, int layer)
         {
-            return _minSteepDotProduct;
-        }
-        public bool GroundCheck(float yNormal, int layer)
-        {
-            if (yNormal < GetMinDot(layer))
+            float upDot = Vector3.Dot(upAxis, hitNormal);
+            if (upDot < GetMinDot(layer))
             {
                 return true;
             }
+
             return false;
         }
-        
+
         public void AdjustVelocity(Vector3 velocity, float acceleration, Vector3 desiredVelocity, bool enableSnap)
         {
             Debug.Log("Desired velocity: " + desiredVelocity + " velocity: " + velocity + " acceleration: " + acceleration + " enableSnap: " + enableSnap);
@@ -320,25 +430,25 @@ namespace FGJ24.Player
                 _contactNormal = desiredVelocity.normalized;
             }
 
-            Vector3 xAxis = ProjectOnContactPlane(Vector3.right, _contactNormal).normalized;
-            Vector3 zAxis = ProjectOnContactPlane(Vector3.forward, _contactNormal).normalized;
+            Vector3 xAxis = ProjectDirectionOnContactPlane(Vector3.right, _contactNormal).normalized;
+            Vector3 zAxis = ProjectDirectionOnContactPlane(Vector3.forward, _contactNormal).normalized;
 
             float currentX = Vector3.Dot(velocity, xAxis);
             float currentZ = Vector3.Dot(velocity, zAxis);
 
-            float maxSpeedChange = acceleration * Time.fixedDeltaTime;
+            float maxSpeedChange = acceleration * Time.deltaTime;
 
 
             if (enableSnap)
             {
-                desiredVelocity = ProjectOnContactPlane(desiredVelocity, _contactNormal);
+                desiredVelocity = ProjectDirectionOnContactPlane(desiredVelocity, _contactNormal);
             }
 
             float newX = Mathf.MoveTowards(currentX, desiredVelocity.x, maxSpeedChange);
             float newZ = Mathf.MoveTowards(currentZ, desiredVelocity.z, maxSpeedChange);
 
 
-            Debug.Log(" currentY: " + velocity.y + " desiredVelocity.y: " + desiredVelocity.y + " maxSpeedChange: " + maxSpeedChange + " Time.fixedDeltaTime: " + Time.fixedDeltaTime + " acceleration: " + acceleration);
+            Debug.Log(" currentY: " + velocity.y + " desiredVelocity.y: " + desiredVelocity.y + " maxSpeedChange: " + maxSpeedChange + " Time.deltaTime: " + Time.deltaTime + " acceleration: " + acceleration);
 
             if (!enableSnap)
             {
@@ -352,16 +462,123 @@ namespace FGJ24.Player
             AdjustVelocityDebug(velocity, desiredVelocity);
         }
 
-        private void AdjustVelocityDebug( Vector3 velocity, Vector3 desiredVelocity)
+        private void AdjustVelocityDebug(Vector3 velocity, Vector3 desiredVelocity)
         {
-            DebugTransform.Instance.SetForwardTransform(ProjectOnContactPlane(Vector3.forward, _contactNormal).normalized);
-            DebugTransform.Instance.SetRightTransform(ProjectOnContactPlane(Vector3.right, _contactNormal).normalized);
-            DebugTransform.Instance.SetUpTransform(ProjectOnContactPlane(Vector3.up, _contactNormal).normalized);
+            DebugTransform.Instance.SetForwardTransform(_upAxisTransform.forward);
+            DebugTransform.Instance.SetRightTransform(_upAxisTransform.right);
+            DebugTransform.Instance.SetUpTransform(_upAxisTransform.up);
 
             Debug.DrawLine(_rigidbody.position, _position + velocity, Color.green);
             Debug.DrawLine(_rigidbody.position, _position + desiredVelocity, Color.red);
         }
 
+        public Vector3 HorizontalMovement(Vector3 velocity, float acceleration, Vector3 desiredVelocity, Vector3 contactNormal)
+        {
+            Vector3 xAxis = ProjectDirectionOnContactPlane(_rightAxis, contactNormal);
+            Vector3 zAxis = ProjectDirectionOnContactPlane(_forwardAxis, contactNormal);
+
+            Vector3 relativeVelocity = velocity - _connectionVelocity;
+            float currentX = Vector3.Dot(relativeVelocity, xAxis);
+            float currentZ = Vector3.Dot(relativeVelocity, zAxis);
+
+            float maxSpeedChange = acceleration * Time.deltaTime;
+
+            float newX = Mathf.MoveTowards(currentX, desiredVelocity.x, maxSpeedChange);
+            float newZ = Mathf.MoveTowards(currentZ, desiredVelocity.z, maxSpeedChange);
+
+            return velocity + (xAxis * (newX - currentX) + zAxis * (newZ - currentZ));
+        }
+
+        public Vector3 VerticalMovement(Vector3 velocity, float acceleration, float desiredYVelocity, Vector3 contactNormal)
+        {
+            Vector3 yAxis = ProjectDirectionOnContactPlane(_upAxis, contactNormal).normalized;
+
+            float currentY = Vector3.Dot(velocity, yAxis);
+            float maxSpeedChange = acceleration * Time.deltaTime;
+
+            float newY = Mathf.MoveTowards(currentY, desiredYVelocity, maxSpeedChange);
+            return velocity + (yAxis * (newY - currentY));
+        }
+
+        public Vector3 ProjectDirectionOnContactPlane(Vector3 direction, Vector3 normal)
+        {
+            return (direction - normal * Vector3.Dot(direction, normal)).normalized;
+        }
+
+        public void LimitVelocity(float maxSpeed)
+        {
+            float speed = _velocity.magnitude;
+            if (speed > maxSpeed)
+            {
+                _velocity *= maxSpeed / (speed + Mathf.Epsilon);
+            }
+        }
+
+        public void ClearState()
+        {
+            _isSnapping = false;
+            _groundContactCount = _steepContactCount = 0;
+            _contactNormal = _steepNormal = _connectionVelocity = Vector3.zero;
+            _previousConnectedRigidbody = _connectedRigidbody;
+            _connectedRigidbody = null;
+        }
+
+        public bool CheckSteepContacts()
+        {
+            if (_steepContactCount > 1)
+            {
+                _steepNormal.Normalize();
+                float upDot = Vector3.Dot(_upAxis, _steepNormal);
+                if (upDot >= _minGroundDotProduct && upDot <= _minSteepDotProduct)
+                {
+                    _groundContactCount = 1;
+                    _steepContactCount = 0;
+                    _contactNormal = _steepNormal;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void UpdateDesiredVelocity(Vector3 direction, float speed)
+        {
+            _desiredVelocity = new Vector3(direction.x, 0, direction.z) * speed;
+        }
+
+        public void UpdateGravityAlignment()
+        {
+            Vector3 fromUp = _gravityAlignment * Vector3.up;
+            Vector3 toUp = CustomGravity.GetUpAxis(_position);
+            float dot = Mathf.Clamp(Vector3.Dot(fromUp, toUp), -1f, 1f);
+            float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
+            float maxAngle = _upAlignmentSpeed * Time.deltaTime;
+            Quaternion newAlignment = Quaternion.FromToRotation(fromUp, toUp) * _gravityAlignment;
+            if (angle <= maxAngle)
+            {
+                _gravityAlignment = newAlignment;
+            }
+            else
+            {
+                _gravityAlignment = Quaternion.SlerpUnclamped(_gravityAlignment, newAlignment, maxAngle / angle);
+            }
+
+            _upAxisTransform.rotation = _gravityAlignment;
+            _forwardAxis = ProjectDirectionOnContactPlane(_cameraTransform.forward, _upAxis);
+            _rightAxis = Vector3.Cross(_upAxis, _forwardAxis);
+        }
+
+        public void UpdateDirections()
+        {
+            if (_playerInputSpace)
+            {
+                _rightAxis = ProjectDirectionOnContactPlane(_playerInputSpace.right, _upAxis);
+                _forwardAxis = ProjectDirectionOnContactPlane(_playerInputSpace.forward, _upAxis);
+            }
+
+            _rightAxis = ProjectDirectionOnContactPlane(Vector3.right, _upAxis);
+            _forwardAxis = ProjectDirectionOnContactPlane(Vector3.forward, _upAxis);
+        }
 
         public float GetMinDot(int gameObjectLayer)
         {
@@ -418,45 +635,15 @@ namespace FGJ24.Player
             _velocity += direction * speed;
         }
 
-
-        public Vector3 HorizontalMovement(Vector3 velocity, float acceleration, Vector3 desiredVelocity, Vector3 contactNormal)
-        {
-            Vector3 xAxis = ProjectOnContactPlane(Vector3.right, contactNormal).normalized;
-            Vector3 zAxis = ProjectOnContactPlane(Vector3.forward, contactNormal).normalized;
-
-            float currentX = Vector3.Dot(velocity, xAxis);
-            float currentZ = Vector3.Dot(velocity, zAxis);
-
-            float maxSpeedChange = acceleration * Time.fixedDeltaTime;
-
-            float newX = Mathf.MoveTowards(currentX, desiredVelocity.x, maxSpeedChange);
-            float newZ = Mathf.MoveTowards(currentZ, desiredVelocity.z, maxSpeedChange);
-
-            return velocity + (xAxis * (newX - currentX) + zAxis * (newZ - currentZ));
-        }
-        
-        public Vector3 VerticalMovement(Vector3 velocity, float acceleration, float desiredYVelocity, Vector3 contactNormal)
-        {
-            Vector3 yAxis = ProjectOnContactPlane(Vector3.up, contactNormal).normalized;
-            
-            float currentY = Vector3.Dot(velocity, yAxis);
-            float maxSpeedChange = acceleration * Time.fixedDeltaTime;
-            
-            float newY = Mathf.MoveTowards(currentY, desiredYVelocity, maxSpeedChange);
-            return velocity + (yAxis * (newY - currentY));
-        }
-
-
         public bool CheckLastFrameGrounded()
         {
             return _stepsSinceLastGrounded <= 1;
         }
-        
+
         public bool CheckIfJustJumped()
         {
             return _stepsSinceLastJump <= 2;
         }
-
 
         public float GetNextJumpTime()
         {
@@ -478,45 +665,6 @@ namespace FGJ24.Player
             _nextDashTime = nextDashTime;
         }
 
-
-        public Vector3 ProjectOnContactPlane(Vector3 vector, Vector3 contactNormal)
-        {
-            return vector - contactNormal * Vector3.Dot(vector, contactNormal);
-        }
-
-        public void LimitVelocity(float maxSpeed)
-        {
-            float speed = _velocity.magnitude;
-            if (speed > maxSpeed)
-            {
-                _velocity *= maxSpeed / (speed + Mathf.Epsilon);
-            }
-        }
-
-
-
-        public void ClearState()
-        {
-            _isSnapping = false;
-            _groundContactCount = _steepContactCount = 0;
-            _contactNormal = _steepNormal = Vector3.zero;
-        }
-
-        public bool CheckSteepContacts()
-        {
-            if (_steepContactCount > 1)
-            {
-                _steepNormal.Normalize();
-                if (_steepNormal.y >= _minGroundDotProduct && _steepNormal.y <= _minSteepDotProduct)
-                {
-                    _groundContactCount = 1;
-                    _steepContactCount = 0;
-                    _contactNormal = _steepNormal;
-                    return true;
-                }
-            }
-            return false;
-        }
 
         public void SaveRigidBody()
         {
@@ -555,15 +703,6 @@ namespace FGJ24.Player
             _desiredVelocity = desiredVelocity;
         }
 
-        public void UpdateDesiredVelocity(Vector3 direction, float speed)
-        {
-            Vector3 moveDirection = new Vector3(direction.x, 0, direction.z);
-            moveDirection = _cameraTransform.forward * moveDirection.z + _cameraTransform.right * moveDirection.x;
-            moveDirection *= speed;
-            moveDirection.y = direction.y;
-            _desiredVelocity = moveDirection;
-        }
-        
         public bool GetIntentToJump()
         {
             return _intentToJump;
@@ -624,6 +763,25 @@ namespace FGJ24.Player
             _velocity = velocity;
         }
 
+        public void UpdateGravity()
+        {
+            Vector3 upAxis;
+            _gravity = CustomGravity.GetGravity(_position, out upAxis);
+            _upAxis = upAxis;
+        }
 
+        public void UpdateUpAxisTransform()
+        {
+            _upAxisTransform.up = _upAxis;
+        }
+        
+        void UpdateConnectionState () {
+            if (_connectedRigidbody == _previousConnectedRigidbody) {
+                Vector3 connectionMovement = _connectedRigidbody.transform.TransformPoint(_connectionLocalPosition) - _connectionWorldPosition;
+                _connectionVelocity = connectionMovement / Time.deltaTime;
+            }
+            _connectionWorldPosition = _rigidbody.position;
+            _connectionLocalPosition = _connectedRigidbody.transform.InverseTransformPoint(_connectionWorldPosition);
+        }
     }
 }

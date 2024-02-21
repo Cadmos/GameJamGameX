@@ -127,6 +127,8 @@ namespace FGJ24.Player
             _controller.CalculateMinStairsDotProduct();
             _controller.CalculateMinGroundDotProduct();
             _controller.CalculateMinSteepDotProduct();
+            
+            //_controller.SetUpAxis();
 
             _idleState = new PlayerIdleState(_character, _controller);
             _fallingState = new PlayerFallingState(_character, _controller);
@@ -150,16 +152,18 @@ namespace FGJ24.Player
 
         public void Update()
         {
-            Debug.Log("currentStateUpdate" + _currentState + " IsGrounded" + _controller.GetIsGrounded());
             DebugCanvasController.Instance.SetStateText(_currentStateEnum.ToString());
+            
             _currentState.UpdateState(this);
         }
 
         public void FixedUpdate()
         {
-            
-            Debug.Log("currentStateFixedUpdate" + _currentState + " currentFrame: " + Time.fixedTime);
             _controller.SaveRigidBody();
+            _controller.UpdateGravity();
+            _controller.UpdateGravityAlignment();
+            
+            _controller.AlignCollider();
             _currentState.FixedUpdateState(this);
             _controller.UpdateRigidBody();
             _controller.ClearState();
@@ -169,6 +173,7 @@ namespace FGJ24.Player
         public void LateUpdate()
         {
             _currentState.LateUpdateState(this);
+            
         }
 
         public void SwitchState(PlayerBaseState state)
