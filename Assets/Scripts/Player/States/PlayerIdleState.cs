@@ -53,9 +53,6 @@ namespace FGJ24.Player
                     player.SwitchState(player.GetPlayerMoveState());
                     return;
                 }
-                
-                _controller.SetDesiredVelocity(Vector3.zero);
-                
                 return;
             }
 
@@ -77,7 +74,7 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Move(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterIdleStats().GetIdleAcceleration(), _controller.GetDesiredVelocity());
+            _controller.Move(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterIdleStats().GetIdleAcceleration(), Vector2.zero, 0);
         }
 
         public override void LateUpdateState(PlayerStateManager player)

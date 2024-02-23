@@ -18,6 +18,8 @@ namespace FGJ24.Player
         private PlayerDashState _dashState;
         private PlayerJumpState _jumpState;
         
+        private PlayerClimbState _climbState;
+        
         private PlayerFallingState _fallingState;
         private PlayerLandingState _landingState;
         private PlayerStoppingState _stoppingState;
@@ -72,6 +74,11 @@ namespace FGJ24.Player
             return _jumpState;
         }
         
+        public PlayerClimbState GetPlayerClimbState()
+        {
+            return _climbState;
+        }
+        
         public PlayerFallingState GetPlayerFallingState()
         {
             return _fallingState;
@@ -116,10 +123,6 @@ namespace FGJ24.Player
         {
             return _winState;
         }
-
-
-
-
         #endregion
 
         public void Initialize()
@@ -127,18 +130,18 @@ namespace FGJ24.Player
             _controller.CalculateMinStairsDotProduct();
             _controller.CalculateMinGroundDotProduct();
             _controller.CalculateMinSteepDotProduct();
+            _controller.CalculateMinClimbDotProduct();
             
-            //_controller.SetUpAxis();
-
             _idleState = new PlayerIdleState(_character, _controller);
+            _moveState = new PlayerMoveState(_character, _controller);
+            _dashState = new PlayerDashState(_character, _controller);
+            _jumpState = new PlayerJumpState(_character, _controller);
+            _climbState = new PlayerClimbState(_character, _controller);
+            
             _fallingState = new PlayerFallingState(_character, _controller);
             _slidingState = new PlayerSlidingState(_character, _controller);
             _stoppingState = new PlayerStoppingState(_character, _controller);
             _landingState = new PlayerLandingState(_character, _controller);
-            
-            _moveState = new PlayerMoveState(_character, _controller);
-            _dashState = new PlayerDashState(_character, _controller);
-            _jumpState = new PlayerJumpState(_character, _controller);
             
             _gatherState = new PlayerGatherState(_character, _controller);
             _mineState = new PlayerMineState(_character, _controller);
@@ -153,34 +156,25 @@ namespace FGJ24.Player
         public void Update()
         {
             DebugCanvasController.Instance.SetStateText(_currentStateEnum.ToString());
-            
             _currentState.UpdateState(this);
         }
 
         public void FixedUpdate()
         {
             _controller.SaveRigidBody();
-            _controller.UpdateGravity();
-            _controller.UpdateGravityAlignment();
-            
-            _controller.AlignCollider();
             _currentState.FixedUpdateState(this);
             _controller.UpdateRigidBody();
             _controller.ClearState();
-            
         }
 
         public void LateUpdate()
         {
             _currentState.LateUpdateState(this);
-            
         }
 
         public void SwitchState(PlayerBaseState state)
         {
-
             _currentState.ExitState(this);
-
             _currentState = state;
             state.EnterState(this);
         }

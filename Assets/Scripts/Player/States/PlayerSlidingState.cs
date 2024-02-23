@@ -55,7 +55,6 @@ namespace FGJ24.Player
             
             if (_controller.GetIsSteep())
             {
-                _controller.UpdateDesiredVelocity(new Vector3(0, _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed(),0), _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed());
                 return;
             }
 
@@ -69,7 +68,7 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Sliding(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity());
+            _controller.Sliding(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), Vector2.zero, _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed());
             _controller.LimitVelocity(_character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed());
         }
 

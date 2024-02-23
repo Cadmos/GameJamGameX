@@ -19,8 +19,6 @@ namespace FGJ24.Player
 
         public override void UpdateState(PlayerStateManager player)
         {
-            _controller.UpdateDesiredVelocity(new Vector3(PlayerControls.Instance.moveData.moveValue.x,0, PlayerControls.Instance.moveData.moveValue.y), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpSpeed());
-
             if (_controller.GetIntentToJump())
                 return;
 
@@ -77,7 +75,7 @@ namespace FGJ24.Player
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.HorizontalMovement(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpSpeed(), _controller.GetDesiredVelocity(), _controller.GetContactNormal());
+            _controller.HorizontalMovement(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpAcceleration(), PlayerControls.Instance.moveData.moveValue, _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpSpeed(), _controller.GetContactNormal());
 
             if (_controller.GetIntentToJump()) //TODO this is a bit of a hack, but it works for now
             {

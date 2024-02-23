@@ -22,6 +22,8 @@ namespace FGJ24.Player
         [SerializeField] private CharacterStoppingStats _characterStopping;
         [SerializeField] private CharacterSlidingStats _characterSliding;
         
+        [SerializeField] private CharacterClimbStats _characterClimb;
+        
         [SerializeField] private CharacterGatherStats _characterGather;
         [SerializeField] private CharacterMineStats _characterMine;
         [SerializeField] private CharacterCraftStats _characterCraft;
@@ -56,6 +58,10 @@ namespace FGJ24.Player
         public CharacterJumpStats GetCharacterJumpStats()
         {
             return _characterJump;
+        }
+        public CharacterClimbStats GetCharacterClimbStats()
+        {
+            return _characterClimb;
         }
         public CharacterFallingStats GetCharacterFallingStats()
         {

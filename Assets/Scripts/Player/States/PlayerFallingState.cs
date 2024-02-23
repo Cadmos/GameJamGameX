@@ -63,13 +63,11 @@ namespace FGJ24.Player
                 player.SwitchState(player.GetPlayerSlidingState());
                 return;
             }
-            
-            _controller.UpdateDesiredVelocity(new Vector3(PlayerControls.Instance.moveData.moveValue.x,_character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingSpeed(), PlayerControls.Instance.moveData.moveValue.y),_character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingMoveSpeed());
         }
 
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Falling(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingMoveAcceleration(),_character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingAcceleration(), _controller.GetDesiredVelocity());
+            _controller.Falling(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingMoveAcceleration(),PlayerControls.Instance.moveData.moveValue, _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingSpeed());
             //_controller.LimitVelocity(_character.GetCharacterAttributes().GetCharacterFallingStats().GetMaxFallingSpeed());
         }
 

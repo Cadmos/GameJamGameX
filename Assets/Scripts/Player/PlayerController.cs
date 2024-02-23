@@ -1,7 +1,7 @@
 using System;
 using FGJ24.CustomPhysics;
+using Ioni;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace FGJ24.Player
 {
@@ -10,69 +10,88 @@ namespace FGJ24.Player
     {
         #region Properties
 
-        [SerializeField] private Rigidbody _rigidbody, _connectedRigidbody, _previousConnectedRigidbody;
-        
-        
+        [SerializeField] private Transform _playerInputSpace;
         [SerializeField] private Transform _cameraTransform;
-        [SerializeField] private Transform _playerInputSpace = default;
-        [SerializeField] private CapsuleCollider _collider;
         [SerializeField] private Transform _upAxisTransform;
-        [SerializeField] private Quaternion _gravityAlignment = Quaternion.identity;
-        [SerializeField] private float _upAlignmentSpeed = 360f;
-        [SerializeField] private Vector3 _gravity;
-
-        [SerializeField] private Vector3 _upAxis, _rightAxis, _forwardAxis;
+        
+        [SerializeField] private Rigidbody _rigidbody;
+        [SerializeField] private Rigidbody _connectedRigidbody;
+        [SerializeField] private Rigidbody _previousConnectedRigidbody;
+        
+        [SerializeField] private CapsuleCollider _collider;
+        
         [SerializeField] private Quaternion _targetRotation;
-
-        [SerializeField] private bool _haveWeWon;
-        [SerializeField] private bool _haveWeLost;
-
-        [SerializeField] private float _maxGroundAngle = 45f;
-
+        [SerializeField] private Quaternion _gravityAlignment = Quaternion.identity;
+        
+        [SerializeField] private Vector3 _upAxis;
+        [SerializeField] private Vector3 _rightAxis;
+        [SerializeField] private Vector3 _forwardAxis;
+        [SerializeField] private Vector3 _gravity;
+        [SerializeField] private Vector3 _velocity;
+        [SerializeField] private Vector3 _desiredVelocity;
+        [SerializeField] private Vector3 _connectionVelocity;
+        [SerializeField] private Vector3 _position;
+        [SerializeField] private Vector3 _connectionWorldPosition;
+        [SerializeField] private Vector3 _connectionLocalPosition;
+        [SerializeField] private Vector3 _contactNormal;
+        [SerializeField] private Vector3 _steepNormal;
+        [SerializeField] private Vector3 _climbNormal;
+        [SerializeField] private Vector3 _snapContactNormal;
+        [SerializeField] private Vector3 _lastClimbNormal;
+        
         [SerializeField] private LayerMask _stairMask = -1;
         [SerializeField] private LayerMask _probeMask = -1;
-
-        [SerializeField] private float _maxStairsAngle = 75f;
-        [SerializeField] private float _maxSteepAngle = 75f;
-
-        [SerializeField] private float _maxSnapSpeed = 100f;
-        [SerializeField] private float _probeDistance = 1f;
-        [SerializeField] private Vector3 _velocity, _desiredVelocity, _connectionVelocity;
-        [SerializeField] private Vector3 _position, _connectionWorldPosition, _connectionLocalPosition;
-
-        public bool WasGroundedLastFrame => _stepsSinceLastGrounded <= 1;
-        public bool IsGrounded => _groundContactCount > 0;
-
-        public bool IsSnapping => _isSnapping;
-        public bool IsSteep => _steepContactCount > 0;
-
-        [SerializeField] private bool _isSnapping;
-        [SerializeField] private int _groundContactCount;
-        [SerializeField] private int _steepContactCount;
+        [SerializeField] private LayerMask _climbMask = -1;
+        
+        [SerializeField] private float _upAlignmentSpeed = 360f;
         [SerializeField] private float _minGroundDotProduct;
         [SerializeField] private float _minStairsDotProduct;
         [SerializeField] private float _minSteepDotProduct;
-
-        [SerializeField] private Vector3 _contactNormal;
-        [SerializeField] private Vector3 _steepNormal;
-
-        [SerializeField] private int _stepsSinceLastGrounded;
-        [SerializeField] private int _stepsSinceLastJump;
-
-        [SerializeField] private int _jumpPhase;
-        [SerializeField] private bool _intentToJump;
-        [SerializeField] private bool _intentToDash;
-        [SerializeField] private int _maxAirJumps;
+        [SerializeField] private float _minClimbDotProduct;
+        [SerializeField] private float _maxSnapSpeed = 100f;
+        [SerializeField] private float _probeDistance = 1f;
+        [SerializeField] private float _distanceFromGround;
+        [SerializeField] private float _stepSmooth = 0.2f;
         [SerializeField] private float _nextDashTime;
         [SerializeField] private float _dashStartTime;
         [SerializeField] private float _landingTime;
         [SerializeField] private float _nextJumpTime;
-        [SerializeField] private float _distanceFromGround;
-        [SerializeField] private float _stepSmooth = 0.2f;
-        [SerializeField] private Vector3 _snapContactNormal;
+        
+        [SerializeField, Range(1, 90)] private float _maxGroundAngle = 45f;
+        [SerializeField, Range(1, 90)] private float _maxStairsAngle = 60f;
+        [SerializeField, Range(1, 90)] private float _maxSteepAngle = 75f;
+        [SerializeField, Range(90, 180)] private float _maxClimbAngle = 140f;
+        
+        [SerializeField] private int _jumpPhase;
+        [SerializeField] private int _maxAirJumps;
+        [SerializeField] private int _stepsSinceLastGrounded;
+        [SerializeField] private int _stepsSinceLastJump;
+        [SerializeField] private int _groundContactCount;
+        [SerializeField] private int _steepContactCount;
+        [SerializeField] private int _climbContactCount;
+        
+        [SerializeField] private bool _isSnapping;
+        [SerializeField] private bool _intentToJump;
+        [SerializeField] private bool _intentToDash;
+        [SerializeField] private bool _haveWeWon;
+        [SerializeField] private bool _haveWeLost;
 
-
+        public bool WasGroundedLastFrame => _stepsSinceLastGrounded <= 1;
+        public bool IsGrounded => _groundContactCount > 0;
+        public bool IsSnapping => _isSnapping;
+        public bool IsSteep => _steepContactCount > 0;
+        public bool IsClimbing => _climbContactCount > 0 && _stepsSinceLastJump > 2;
         #endregion
+
+        public void SetMinClimbDotProduct(float minClimbDotProduct)
+        {
+            _minClimbDotProduct = minClimbDotProduct;
+        }
+
+        public void GetMinClimbDotProduct()
+        {
+            _minClimbDotProduct = Mathf.Cos(_maxClimbAngle * Mathf.Deg2Rad);
+        }
 
         public void SetUpAxisTransform(Transform upAxisTransform)
         {
@@ -127,13 +146,16 @@ namespace FGJ24.Player
         void OnDrawGizmos()
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(_position + _collider.center - _upAxis * (_collider.radius), _collider.radius);
-            Gizmos.DrawWireSphere(_position - _upAxis * _collider.radius + _upAxis * _collider.height, _collider.radius);
+            float radius = _collider.radius;
+            float height = _collider.height;
+            Vector3 center = _collider.center;
+            Gizmos.DrawWireSphere(_position + center - _upAxis * radius, radius);
+            Gizmos.DrawWireSphere(_position - _upAxis * radius + _upAxis * height, radius);
             Debug.DrawLine(_position, _position + -_upAxis * _probeDistance, Color.red, 10f);
-            Debug.DrawLine(_position, _position + _upAxis * _collider.height, Color.magenta, 10f);
+            Debug.DrawLine(_position, _position + _upAxis * height, Color.magenta, 10f);
         }
 
-        public void Falling(Vector3 velocity, float horizontalAcceleration, float verticalAcceleration, Vector3 desiredVelocity)
+        public void Falling1(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
         {
             _stepsSinceLastGrounded += 1;
             _stepsSinceLastJump += 1;
@@ -159,9 +181,25 @@ namespace FGJ24.Player
                 _contactNormal = _upAxis;
             }
 
-            velocity = HorizontalMovement(velocity, horizontalAcceleration, desiredVelocity, _contactNormal);
+            velocity = HorizontalMovement(velocity, acceleration, playerInput, maxSpeed, _contactNormal);
             //velocity = VerticalMovement(velocity, verticalAcceleration, desiredVelocity.y, _contactNormal);
 
+            velocity += _gravity * Time.deltaTime;
+            _velocity = velocity;
+        }
+        public void Falling(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
+        {
+            UpdateGravity();
+            UpdateGravityAlignment();
+            AlignCollider();
+            
+            _stepsSinceLastGrounded += 1;
+            _stepsSinceLastJump += 1;
+            
+            velocity = HorizontalMovement(velocity, acceleration, playerInput, maxSpeed, _contactNormal);
+            
+            AdjustVelocityDebug(velocity, playerInput, maxSpeed);
+            
             velocity += _gravity * Time.deltaTime;
             _velocity = velocity;
         }
@@ -172,13 +210,81 @@ namespace FGJ24.Player
             _collider.transform.rotation = Quaternion.LookRotation(_forwardAxis, _upAxis);
         }
 
-        public void Move(Vector3 velocity, float acceleration, Vector3 desiredVelocity)
+        public void Move(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
         {
+            UpdateGravity();
+            UpdateGravityAlignment();
+            AlignCollider();
             _stepsSinceLastGrounded += 1;
             _stepsSinceLastJump += 1;
 
             //are we on an actionable surface?
-            if (GetIsGrounded() || SnapToGround() || CheckSteepContacts())
+            if (CheckClimbing() || GetIsGrounded() || SnapToGround() || CheckSteepContacts())
+            {
+                if (_isSnapping)
+                {
+                    _contactNormal = _snapContactNormal != Vector3.zero ? _snapContactNormal : _upAxis;
+                    float dot = Vector3.Dot(velocity, _contactNormal);
+                    if (dot > 0f)
+                    {
+                        velocity = (velocity - _contactNormal * dot).normalized * velocity.magnitude;
+                    }
+                }
+                if (_contactNormal == Vector3.zero)
+                {
+                    _contactNormal = _upAxis;
+                }
+                _stepsSinceLastGrounded = 0;
+                if (_stepsSinceLastJump > 1)
+                {
+                    _jumpPhase = 0;
+                }
+
+                if (_groundContactCount > 1)
+                    _contactNormal.Normalize();
+            }
+            else
+            {
+                _contactNormal = _upAxis;
+            }
+
+            if (_connectedRigidbody)
+            {
+                if (_connectedRigidbody.isKinematic || _connectedRigidbody.mass >= _rigidbody.mass)
+                {
+                    UpdateConnectionState();
+                }
+            }
+            
+            velocity = HorizontalMovement(velocity, acceleration, playerInput,maxSpeed, _contactNormal);
+
+            if (_isSnapping)
+            {
+                if (_distanceFromGround > _stepSmooth)
+                {
+                    _position -= _upAxis * _stepSmooth;
+                }
+            }
+            
+            AdjustVelocityDebug(velocity, playerInput, maxSpeed);
+ 
+            velocity += _contactNormal * (Vector3.Dot(_gravity, _contactNormal) * Time.deltaTime);
+            
+            velocity += _gravity * Time.deltaTime;
+            _velocity = velocity;
+        }
+        
+        
+        public void Climbing(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
+        {
+            UpdateGravity();
+            UpdateGravityAlignment();
+            AlignCollider();
+            _stepsSinceLastGrounded += 1;
+            _stepsSinceLastJump += 1;
+
+            //are we on an actionable surface?
+            if (CheckClimbing() || GetIsGrounded() || SnapToGround() || CheckSteepContacts())
             {
                 if (_isSnapping)
                 {
@@ -208,14 +314,16 @@ namespace FGJ24.Player
             {
                 _contactNormal = _upAxis;
             }
-            
-            if (_connectedRigidbody) {
-                if (_connectedRigidbody.isKinematic || _connectedRigidbody.mass >= _rigidbody.mass) {
+
+            if (_connectedRigidbody)
+            {
+                if (_connectedRigidbody.isKinematic || _connectedRigidbody.mass >= _rigidbody.mass)
+                {
                     UpdateConnectionState();
                 }
             }
-
-            velocity = HorizontalMovement(velocity, acceleration, desiredVelocity, _contactNormal);
+            
+            velocity = ClimbingMovement(velocity, acceleration, playerInput, maxSpeed, _contactNormal);
 
             if (_isSnapping)
             {
@@ -225,15 +333,37 @@ namespace FGJ24.Player
                 }
             }
             
-
-
-            AdjustVelocityDebug(velocity, desiredVelocity);
-            velocity += _gravity * Time.deltaTime;
+            velocity -= _contactNormal * (acceleration * Time.deltaTime);
+            
+            AdjustVelocityDebug(velocity, playerInput, maxSpeed);
             _velocity = velocity;
         }
 
-        public void Sliding(Vector3 velocity, float acceleration, Vector3 desiredVelocity)
+        private bool CheckClimbing()
         {
+            if (IsClimbing)
+            {
+                if (_climbContactCount > 1)
+                {
+                    _climbNormal.Normalize();
+                    float upDot = Vector3.Dot(_upAxis, _climbNormal);
+                    if (upDot >= _minGroundDotProduct)
+                    {
+                        _climbNormal = _lastClimbNormal;
+                    }
+                }
+                _groundContactCount = 1;
+                _contactNormal = _climbNormal;
+                return true;
+            }
+            return false;
+        }
+
+        public void Sliding(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
+        {
+            UpdateGravity();
+            UpdateGravityAlignment();
+            AlignCollider();
             _stepsSinceLastGrounded += 1;
             _stepsSinceLastJump += 1;
 
@@ -258,15 +388,14 @@ namespace FGJ24.Player
                 _contactNormal = _upAxis;
             }
 
-            velocity = HorizontalMovement(velocity, acceleration, desiredVelocity, _contactNormal);
-            //velocity = VerticalMovement(velocity, acceleration, desiredVelocity.y, _contactNormal);
+            velocity = HorizontalMovement(velocity, acceleration, playerInput, maxSpeed, _contactNormal);
 
-            AdjustVelocityDebug(velocity, desiredVelocity);
+            
             velocity += _gravity * Time.deltaTime;
             _velocity = velocity;
         }
 
-        public void Jump(Vector3 velocity, float acceleration, Vector3 desiredVelocity, Vector3 contactNormal)
+        public void Jump(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
         {
             _stepsSinceLastGrounded += 1;
             _stepsSinceLastJump += 1;
@@ -280,14 +409,14 @@ namespace FGJ24.Player
                 }
 
                 if (_groundContactCount > 1)
-                    contactNormal.Normalize();
+                    _contactNormal.Normalize();
             }
             else
             {
-                contactNormal = _upAxis;
+                _contactNormal = _upAxis;
             }
 
-            HorizontalMovement(velocity, acceleration, desiredVelocity, contactNormal);
+            HorizontalMovement(velocity, acceleration, playerInput,maxSpeed,_contactNormal);
         }
 
         public void JumpToHeight(Vector3 velocity, Vector3 contactNormal, float jumpHeight)
@@ -334,9 +463,10 @@ namespace FGJ24.Player
             }
         }
 
-        public void EvaluateCollisions(Collision collision)
+        public void EvaluateCollisions1(Collision collision)
         {
-            float minDot = GetMinDot(collision.gameObject.layer);
+            int layer = collision.gameObject.layer;
+            float minDot = GetMinDot(layer);
             for (int i = 0; i < collision.contactCount; i++)
             {
                 Vector3 normal = collision.GetContact(i).normal;
@@ -347,17 +477,143 @@ namespace FGJ24.Player
                     _contactNormal += normal;
                     _connectedRigidbody = collision.rigidbody;
                 }
-                else if (upDot > -0.01f)
+                else
                 {
-                    _steepContactCount += 1;
-                    _steepNormal += normal;
-                    if (_groundContactCount == 0)
+                    if (upDot > -0.01f)
                     {
+                        _steepContactCount += 1;
+                        _steepNormal += normal;
+                        if (_groundContactCount == 0)
+                        {
+                            _connectedRigidbody = collision.rigidbody;
+                        }
+                    }
+                }
+
+                if (upDot >= _minClimbDotProduct && (_climbMask & (1 << layer)) != 0)
+                {
+                    _climbContactCount += 1;
+                    _climbNormal += normal;
+                    _lastClimbNormal = normal;
+                    _connectedRigidbody = collision.rigidbody;
+                }
+            }
+        }
+        
+        public void EvaluateCollisions(Collision collision)
+        {
+            int layer = collision.gameObject.layer;
+            Debug.Log("Layer: " + layer);
+            if((_probeMask & (1 << layer)) != 0)
+            {
+                Debug.Log("Probe Mask");
+                for (int i = 0; i < collision.contactCount; i++)
+                {
+                    Debug.Log("Contact count: " + collision.contactCount);
+                    Vector3 normal = collision.GetContact(i).normal;
+                    float upDot = Vector3.Dot(_upAxis, normal);
+                    Debug.Log("Ground Contact. upDot: " + upDot + " minGroundDotProduct: " + _minGroundDotProduct);
+                    //check ground contacts
+                    if(upDot >= _minGroundDotProduct)
+                    {
+                       Debug.Log("Ground Contact");
+                        _groundContactCount += 1;
+                        _contactNormal += normal;
                         _connectedRigidbody = collision.rigidbody;
+                        continue;
+                    }
+                    
+                    //if not ground contact is it steep contact?
+                    if (upDot < _minGroundDotProduct && upDot >= _minSteepDotProduct)
+                    {
+                        Debug.Log("Steep Contact");
+                        _steepContactCount += 1;
+                        _steepNormal += normal;
+                        if (_groundContactCount == 0)
+                        {
+                            _connectedRigidbody = collision.rigidbody;
+                        }
+                        continue;
+                    }
+                    
+                    //if not steep contact is it climb contact?
+                    if (upDot < _minSteepDotProduct && upDot >= _minClimbDotProduct)
+                    {
+                        Debug.Log("Climb Contact");
+                        _climbContactCount += 1;
+                        _climbNormal += normal;
+                        _lastClimbNormal = normal;
+                        _connectedRigidbody = collision.rigidbody;
+                    }
+                }
+
+                return;
+            }
+
+            if ((_stairMask & (1 << layer)) != 0)
+            {
+                for (int i = 0; i < collision.contactCount; i++)
+                {
+                    Vector3 normal = collision.GetContact(i).normal;
+                    float upDot = Vector3.Dot(_upAxis, normal);
+                    if (upDot >= _minStairsDotProduct)
+                    {
+                        _groundContactCount += 1;
+                        _contactNormal += normal;
+                        _connectedRigidbody = collision.rigidbody;
+                        continue;
+                    }
+
+                    if (upDot < _minStairsDotProduct && upDot >= _minSteepDotProduct)
+                    {
+                        _steepContactCount += 1;
+                        _steepNormal += normal;
+                        if (_groundContactCount == 0)
+                        {
+                            _connectedRigidbody = collision.rigidbody;
+                        }
+                        continue;
+                    }
+
+                    if (upDot >= _minClimbDotProduct)
+                    {
+                        _climbContactCount += 1;
+                        _climbNormal += normal;
+                        _lastClimbNormal = normal;
+                        _connectedRigidbody = collision.rigidbody;
+                    }
+                }
+                return;
+            }
+            
+            if((_climbMask & (1 << layer)) != 0)
+            {
+                for (int i = 0; i < collision.contactCount; i++)
+                {
+                    Vector3 normal = collision.GetContact(i).normal;
+                    float upDot = Vector3.Dot(_upAxis, normal);
+                    
+                    if(upDot >= _minGroundDotProduct)
+                    {
+                        _groundContactCount += 1;
+                        _contactNormal += normal;
+                        _connectedRigidbody = collision.rigidbody;
+                        continue;
+                    }
+                    
+                    if (upDot < _minGroundDotProduct && upDot >= _minSteepDotProduct)
+                    {
+                        _steepContactCount += 1;
+                        _steepNormal += normal;
+                        if (_groundContactCount == 0)
+                        {
+                            _connectedRigidbody = collision.rigidbody;
+                        }
                     }
                 }
             }
         }
+
 
         public bool SnapToGround()
         {
@@ -385,7 +641,6 @@ namespace FGJ24.Player
             Debug.DrawRay(_position - _upAxis * _collider.radius + _upAxis * _collider.height, _rightAxis * _probeDistance, Color.yellow, 10f);
             Debug.DrawLine(_position, _position + _upAxis * _collider.height, Color.magenta, 10f);
             Debug.DrawLine(_position, hit.point, Color.green, 10f);
-
 
             if (GroundCheck(_upAxis, hit.normal, hit.collider.gameObject.layer))
                 return false;
@@ -458,21 +713,19 @@ namespace FGJ24.Player
 
             velocity += xAxis * (newX - currentX) + zAxis * (newZ - currentZ);
             _velocity = velocity;
-
-            AdjustVelocityDebug(velocity, desiredVelocity);
         }
 
-        private void AdjustVelocityDebug(Vector3 velocity, Vector3 desiredVelocity)
+        private void AdjustVelocityDebug(Vector3 velocity, Vector2 playerInput, float maxSpeed)
         {
             DebugTransform.Instance.SetForwardTransform(_upAxisTransform.forward);
             DebugTransform.Instance.SetRightTransform(_upAxisTransform.right);
             DebugTransform.Instance.SetUpTransform(_upAxisTransform.up);
 
             Debug.DrawLine(_rigidbody.position, _position + velocity, Color.green);
-            Debug.DrawLine(_rigidbody.position, _position + desiredVelocity, Color.red);
+            Debug.DrawLine(_rigidbody.position, _position + new Vector3(playerInput.x * maxSpeed,0, playerInput.y * maxSpeed), Color.red);
         }
 
-        public Vector3 HorizontalMovement(Vector3 velocity, float acceleration, Vector3 desiredVelocity, Vector3 contactNormal)
+        public Vector3 HorizontalMovement(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed, Vector3 contactNormal)
         {
             Vector3 xAxis = ProjectDirectionOnContactPlane(_rightAxis, contactNormal);
             Vector3 zAxis = ProjectDirectionOnContactPlane(_forwardAxis, contactNormal);
@@ -483,9 +736,29 @@ namespace FGJ24.Player
 
             float maxSpeedChange = acceleration * Time.deltaTime;
 
-            float newX = Mathf.MoveTowards(currentX, desiredVelocity.x, maxSpeedChange);
-            float newZ = Mathf.MoveTowards(currentZ, desiredVelocity.z, maxSpeedChange);
+            float newX = Mathf.MoveTowards(currentX, playerInput.x * maxSpeed, maxSpeedChange);
+            float newZ = Mathf.MoveTowards(currentZ, playerInput.y * maxSpeed, maxSpeedChange);
 
+            return velocity + (xAxis * (newX - currentX) + zAxis * (newZ - currentZ));
+        }
+        
+        public Vector3 ClimbingMovement(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed, Vector3 contactNormal)
+        {
+            Vector3 xAxis = Vector3.Cross(contactNormal, _upAxis);
+            Vector3 zAxis = _upAxis;
+            
+            xAxis = ProjectDirectionOnContactPlane(xAxis, contactNormal);
+            zAxis = ProjectDirectionOnContactPlane(zAxis, contactNormal);
+
+            Vector3 relativeVelocity = velocity - _connectionVelocity;
+            float currentX = Vector3.Dot(relativeVelocity, xAxis);
+            float currentZ = Vector3.Dot(relativeVelocity, zAxis);
+
+            float maxSpeedChange = acceleration * Time.deltaTime;
+
+            float newX = Mathf.MoveTowards(currentX, playerInput.x * maxSpeed, maxSpeedChange);
+            float newZ = Mathf.MoveTowards(currentZ, playerInput.y * maxSpeed, maxSpeedChange);
+            
             return velocity + (xAxis * (newX - currentX) + zAxis * (newZ - currentZ));
         }
 
@@ -517,8 +790,9 @@ namespace FGJ24.Player
         public void ClearState()
         {
             _isSnapping = false;
-            _groundContactCount = _steepContactCount = 0;
-            _contactNormal = _steepNormal = _connectionVelocity = Vector3.zero;
+            _groundContactCount = _steepContactCount = _climbContactCount = 0;
+            _contactNormal = _steepNormal = _climbNormal = Vector3.zero;
+            _connectionVelocity = Vector3.zero;
             _previousConnectedRigidbody = _connectedRigidbody;
             _connectedRigidbody = null;
         }
@@ -554,14 +828,8 @@ namespace FGJ24.Player
             float angle = Mathf.Acos(dot) * Mathf.Rad2Deg;
             float maxAngle = _upAlignmentSpeed * Time.deltaTime;
             Quaternion newAlignment = Quaternion.FromToRotation(fromUp, toUp) * _gravityAlignment;
-            if (angle <= maxAngle)
-            {
-                _gravityAlignment = newAlignment;
-            }
-            else
-            {
-                _gravityAlignment = Quaternion.SlerpUnclamped(_gravityAlignment, newAlignment, maxAngle / angle);
-            }
+            
+            _gravityAlignment = angle <= maxAngle ? newAlignment : Quaternion.SlerpUnclamped(_gravityAlignment, newAlignment, maxAngle / angle);
 
             _upAxisTransform.rotation = _gravityAlignment;
             _forwardAxis = ProjectDirectionOnContactPlane(_cameraTransform.forward, _upAxis);
@@ -765,8 +1033,7 @@ namespace FGJ24.Player
 
         public void UpdateGravity()
         {
-            Vector3 upAxis;
-            _gravity = CustomGravity.GetGravity(_position, out upAxis);
+            _gravity = CustomGravity.GetGravity(_position, out var upAxis);
             _upAxis = upAxis;
         }
 
@@ -774,14 +1041,22 @@ namespace FGJ24.Player
         {
             _upAxisTransform.up = _upAxis;
         }
-        
-        void UpdateConnectionState () {
-            if (_connectedRigidbody == _previousConnectedRigidbody) {
+
+        void UpdateConnectionState()
+        {
+            if (_connectedRigidbody == _previousConnectedRigidbody)
+            {
                 Vector3 connectionMovement = _connectedRigidbody.transform.TransformPoint(_connectionLocalPosition) - _connectionWorldPosition;
                 _connectionVelocity = connectionMovement / Time.deltaTime;
             }
-            _connectionWorldPosition = _rigidbody.position;
+
+            _connectionWorldPosition = _position;
             _connectionLocalPosition = _connectedRigidbody.transform.InverseTransformPoint(_connectionWorldPosition);
+        }
+
+        public void CalculateMinClimbDotProduct()
+        {
+            _minClimbDotProduct = Mathf.Cos(_maxClimbAngle * Mathf.Deg2Rad);
         }
     }
 }

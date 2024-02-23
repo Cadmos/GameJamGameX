@@ -11,10 +11,15 @@ namespace FGJ24.Player
         {
             player.SetCurrentStateEnum(PlayerStateEnum.Move);
             _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Move);
-            //_controller.SetMaxSnapSpeed(_character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed()+8);
         }
         public override void UpdateState(PlayerStateManager player)
         {
+            if(_controller.IsClimbing)
+            {
+                player.SwitchState(player.GetPlayerClimbState());
+                return;
+            }
+            
             if (_controller.WasGroundedLastFrame || _controller.GetIsGrounded() || _controller.IsSnapping)
             {
                 if (_controller.HaveWeWon())
@@ -47,7 +52,6 @@ namespace FGJ24.Player
                     player.SwitchState(player.GetPlayerStoppingState());
                     return;
                 }
-                _controller.UpdateDesiredVelocity(new Vector3(PlayerControls.Instance.moveData.moveValue.x,0, PlayerControls.Instance.moveData.moveValue.y), _character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed());
                 return;
             }
 
@@ -65,7 +69,8 @@ namespace FGJ24.Player
         }
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Move(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), _controller.GetDesiredVelocity());
+            
+            _controller.Move(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), PlayerControls.Instance.moveData.moveValue, _character.GetCharacterAttributes().GetCharacterMoveStats().GetMoveSpeed());
         }
         public override void LateUpdateState(PlayerStateManager player)
         {

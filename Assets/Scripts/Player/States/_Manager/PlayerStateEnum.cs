@@ -6,6 +6,7 @@ namespace FGJ24.Player
         Move,
         Dash,
         Jump,
+        Climb,
         Falling,
         Landing,
         Stopping,
