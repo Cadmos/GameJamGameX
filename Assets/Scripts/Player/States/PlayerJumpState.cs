@@ -12,42 +12,34 @@ namespace FGJ24.Player
 
         public override void EnterState(PlayerStateManager player)
         {
+            InitialJump();
             player.SetCurrentStateEnum(PlayerStateEnum.Jump);
-            _controller.SetIntentToJump(true);
             _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Jump);
+            _controller.SetIntentToJump(true);
         }
 
         public override void UpdateState(PlayerStateManager player)
         {
+        }
+
+        public override void FixedUpdateState(PlayerStateManager player)
+        {
+            _controller.UpdateGravity();
+            _controller.PrePhysicsUpdate();
+
             if (_controller.GetIntentToJump())
-                return;
-
-            if (_controller.GetVelocity().y > 0)
-                return;
-
-            if (_controller.GetIsGrounded())
             {
-                if(_controller.HaveWeWon())
-                {
-                    player.SwitchState(player.GetPlayerWinState());
-                    return;
-                }
+                Jump();
+                _controller.SetIntentToJump(false);
+                return;
+            }
             
-                if(_controller.HaveWeLost())
+            Debug.Log("JumpState: " + _controller.IsGrounded);
+            if (_controller.IsGrounded)
+            {
+                if (PlayerControls.Instance.moveData.movePerformed == false)
                 {
-                    player.SwitchState(player.GetPlayerDieState());
-                    return;
-                }
-                
-                if (PlayerControls.Instance.interactData.interactPerformed)
-                {
-                    player.SwitchState(player.GetPlayerGatherState());
-                    return;
-                }
-                    
-                if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
-                {
-                    player.SwitchState(player.GetPlayerDashState());
+                    player.SwitchState(player.GetPlayerStoppingState());
                     return;
                 }
                 
@@ -56,33 +48,22 @@ namespace FGJ24.Player
                     player.SwitchState(player.GetPlayerMoveState());
                     return;
                 }
-                
-                player.SwitchState(player.GetPlayerLandingState());
                 return;
             }
-            
-            if (_controller.GetIsSteep())
+
+            if (_controller.IsSteep)
             {
                 player.SwitchState(player.GetPlayerSlidingState());
                 return;
             }
 
-            if(_controller.GetVelocity().y > -_character.GetCharacterAttributes().GetCharacterJumpStats().FallSpeedThreshold()) 
-                return;
             
-            player.SwitchState(player.GetPlayerFallingState());
-        }
-
-        public override void FixedUpdateState(PlayerStateManager player)
-        {
-            _controller.HorizontalMovement(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpAcceleration(), PlayerControls.Instance.moveData.moveValue, _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpSpeed(), _controller.GetContactNormal());
-
-            if (_controller.GetIntentToJump()) //TODO this is a bit of a hack, but it works for now
+            if (_controller.IsMovingUp())
             {
-                _controller.JumpToHeight(_controller.GetVelocity(),_controller.GetContactNormal(),_character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpHeight());
-                _controller.SetNextJumpTime(Time.time + _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpCooldownAfterJumping());
-                _controller.SetIntentToJump(false);
+                Jump();
+                return;
             }
+            player.SwitchState(player.GetPlayerFallingState());
         }
         
         public override void LateUpdateState(PlayerStateManager player)
@@ -93,6 +74,19 @@ namespace FGJ24.Player
         public override void ExitState(PlayerStateManager player)
         {
             player.SetPreviousStateEnum(PlayerStateEnum.Jump);
+        }
+
+
+        private void InitialJump()
+        {
+            _controller.Jump(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpAcceleration(), PlayerControls.Instance.moveData.moveValue, _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpSpeed());
+            _controller.JumpToHeight(_controller.GetVelocity(),_controller.GetContactNormal(),_character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpHeight());
+            _controller.SetNextJumpTime(Time.time + _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpCooldownAfterJumping());
+        }
+
+        private void Jump()
+        {
+            _controller.Jump(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpAcceleration(), PlayerControls.Instance.moveData.moveValue, _character.GetCharacterAttributes().GetCharacterJumpStats().GetJumpSpeed());
         }
     }
 }

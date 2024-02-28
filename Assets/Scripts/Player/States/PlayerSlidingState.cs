@@ -23,10 +23,15 @@ namespace FGJ24.Player
         public override void FixedUpdateState(PlayerStateManager player)
         {
             _controller.UpdateGravity();
-            _controller.UpdatePhysicsState();
+            _controller.PrePhysicsUpdate();
             
             if (_controller.GetIsGrounded())
             {
+                if (PlayerControls.Instance.jumpData.jumpPerformed)
+                {
+                    player.SwitchState(player.GetPlayerJumpState());
+                    return;
+                }
                 if (PlayerControls.Instance.moveData.movePerformed)
                 {
                     player.SwitchState(player.GetPlayerMoveState());
@@ -43,7 +48,6 @@ namespace FGJ24.Player
             }
             
             player.SwitchState(player.GetPlayerFallingState());
-
         }
 
         public override void LateUpdateState(PlayerStateManager player)
@@ -62,7 +66,6 @@ namespace FGJ24.Player
         private void Sliding()
         {
             _controller.Sliding(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetAcceleration(), Vector2.zero, _character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed());
-            //_controller.LimitVelocity(_character.GetCharacterAttributes().GetCharacterSlidingStats().GetSlidingSpeed());
         }
     }
 }

@@ -17,22 +17,8 @@ namespace FGJ24.Player
         }
         public override void UpdateState(PlayerStateManager player)
         {
-            _controller.UpdateDesiredVelocity(new Vector3(PlayerControls.Instance.moveData.moveValue.x,0, PlayerControls.Instance.moveData.moveValue.y), _character.GetCharacterAttributes().GetCharacterDashStats().GetDashSpeed());
-
             if (_controller.GetIsGrounded())
             {
-                if(_controller.HaveWeWon())
-                {
-                    player.SwitchState(player.GetPlayerWinState());
-                    return;
-                }
-                
-                if (_controller.HaveWeLost())
-                {
-                    player.SwitchState(player.GetPlayerDieState());
-                    return;
-                }
-                
                 if (_controller.GetIntentToDash())
                     return;
 
@@ -73,14 +59,14 @@ namespace FGJ24.Player
         {
             if (_controller.GetIntentToDash())
             {
-                _controller.AdjustVelocity( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterDashStats().GetInitialDashAcceleration(), _controller.GetDesiredVelocity(), true);
+                _controller.Move( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterDashStats().GetInitialDashAcceleration(), _controller.GetDesiredVelocity(), _character.GetCharacterAttributes().GetCharacterDashStats().GetDashSpeed());
                 _controller.LimitVelocity(_character.GetCharacterAttributes().GetCharacterDashStats().GetDashMaxSpeed());
                 _controller.SetIntentToDash(false);
                 _controller.SetNextDashTime(Time.time + _character.GetCharacterAttributes().GetCharacterDashStats().GetDashCooldownDuration() + _character.GetCharacterAttributes().GetCharacterDashStats().GetDashDuration());
                 _controller.SetDashStartTime(Time.time);
                 return;
             }
-            _controller.AdjustVelocity(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterDashStats().GetDashAcceleration(), _controller.GetDesiredVelocity(), true);
+            _controller.Move(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterDashStats().GetDashAcceleration(), _controller.GetDesiredVelocity(), _character.GetCharacterAttributes().GetCharacterDashStats().GetDashSpeed());
             _controller.LimitVelocity(_character.GetCharacterAttributes().GetCharacterDashStats().GetDashMaxSpeed());
         }
         public override void LateUpdateState(PlayerStateManager player)

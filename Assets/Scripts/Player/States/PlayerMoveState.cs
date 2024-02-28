@@ -15,16 +15,20 @@ namespace FGJ24.Player
         }
         public override void UpdateState(PlayerStateManager player)
         {
-
-                
         }
+        
         public override void FixedUpdateState(PlayerStateManager player)
         {
             _controller.UpdateGravity();
-            _controller.UpdatePhysicsState();
+            _controller.PrePhysicsUpdate();
             
             if (_controller.IsGrounded)
             {
+                if (PlayerControls.Instance.jumpData.jumpPerformed)
+                {
+                    player.SwitchState(player.GetPlayerJumpState());
+                    return;
+                }
                 if (PlayerControls.Instance.moveData.movePerformed == false)
                 {
                     player.SwitchState(player.GetPlayerStoppingState());

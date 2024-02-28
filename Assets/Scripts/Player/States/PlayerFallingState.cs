@@ -23,11 +23,10 @@ namespace FGJ24.Player
         public override void FixedUpdateState(PlayerStateManager player)
         {
             _controller.UpdateGravity();
-            _controller.UpdatePhysicsState();
+            _controller.PrePhysicsUpdate();
             
             if (_controller.GetIsGrounded())
             {
-                Debug.Log("Grounded in FallingState why?");
                 if (PlayerControls.Instance.moveData.movePerformed == false)
                 {
                     player.SwitchState(player.GetPlayerStoppingState());
@@ -39,7 +38,6 @@ namespace FGJ24.Player
 
             if (_controller.GetIsSteep())
             {
-                Debug.Log("Steep in FallingState why?");
                 player.SwitchState(player.GetPlayerSlidingState());
                 return;
             }

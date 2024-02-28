@@ -168,7 +168,7 @@ namespace FGJ24.Player
 
         public void FixedUpdate()
         {
-            //Debug.Log("FixedUpdate, Frame " + Time.frameCount + "State: " + _currentState);
+            Debug.Log("FixedUpdate, Frame " + Time.frameCount + "State: " + _currentState);
             _currentState.FixedUpdateState(this);
             DebugCanvasController.Instance.SetStateText(_currentStateEnum.ToString());
             _controller.UpdateRigidBody();
