@@ -18,6 +18,16 @@ namespace FGJ24.Player
             _playerStateManager.GetController().EvaluateCollisions(collision);
         }
 
+        private void OnTriggerEnter(Collider collider)
+        {
+            _playerStateManager.GetController().HandleTriggerEnter(collider);
+        }
+        
+        private void OnTriggerStay(Collider collider)
+        {
+            _playerStateManager.GetController().HandleTriggerStay(collider);
+        }
+
         private void Awake()
         {
             _playerStateManager.Initialize();

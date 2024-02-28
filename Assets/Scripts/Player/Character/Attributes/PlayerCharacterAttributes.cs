@@ -16,13 +16,16 @@ namespace FGJ24.Player
         [SerializeField] private CharacterMoveStats _characterMove;
         [SerializeField] private CharacterDashStats _characterDash;
         [SerializeField] private CharacterJumpStats _characterJump;
+        [SerializeField] private CharacterClimbStats _characterClimb;
+        [SerializeField] private CharacterSwimStats _characterSwim;
+        [SerializeField] private CharacterDiveStats _characterDive;
         
         [SerializeField] private CharacterFallingStats _characterFalling;
         [SerializeField] private CharacterLandingStats _characterLanding;
         [SerializeField] private CharacterStoppingStats _characterStopping;
         [SerializeField] private CharacterSlidingStats _characterSliding;
         
-        [SerializeField] private CharacterClimbStats _characterClimb;
+        
         
         [SerializeField] private CharacterGatherStats _characterGather;
         [SerializeField] private CharacterMineStats _characterMine;
@@ -98,6 +101,11 @@ namespace FGJ24.Player
         public CharacterWinStats GetCharacterWinStats()
         {
             return _characterWin;
+        }
+
+        public CharacterSwimStats GetCharacterSwimStats()
+        {
+            return _characterSwim;
         }
     }
 }

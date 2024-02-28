@@ -42,6 +42,7 @@ namespace FGJ24.Player
         [SerializeField] private LayerMask _stairMask = -1;
         [SerializeField] private LayerMask _probeMask = -1;
         [SerializeField] private LayerMask _climbMask = -1;
+        [SerializeField] private LayerMask _waterMask = -1;
         
         [SerializeField] private float _upAlignmentSpeed = 360f;
         [SerializeField] private float _minGroundDotProduct;
@@ -69,18 +70,35 @@ namespace FGJ24.Player
         [SerializeField] private int _groundContactCount;
         [SerializeField] private int _steepContactCount;
         [SerializeField] private int _climbContactCount;
+        [SerializeField] private float _submergence;
+        
+        [SerializeField] private float _submergenceOffset = 0.5f;
+        [SerializeField, Min(0.1f)] private float _submergenceRange = 1f;
+        [SerializeField, Range(0f, 10f)] private float _waterDrag = 1;
+        [SerializeField, Min(0f)] private float _buoyancy = 1f;
+        [SerializeField, Range(0.01f, 1f)] private float _swimThreshold = 0.5f;
         
         [SerializeField] private bool _isSnapping;
         [SerializeField] private bool _intentToJump;
         [SerializeField] private bool _intentToDash;
         [SerializeField] private bool _haveWeWon;
         [SerializeField] private bool _haveWeLost;
-
+        
         public bool WasGroundedLastFrame => _stepsSinceLastGrounded <= 1;
-        public bool IsGrounded => _groundContactCount > 0;
         public bool IsSnapping => _isSnapping;
+        public bool IsGrounded => _groundContactCount > 0;
+        
+        public bool OnSlope => _steepContactCount > 0;
         public bool IsSteep => _steepContactCount > 0;
+        
+        
+        public bool TouchingWall => _climbContactCount > 0;
         public bool IsClimbing => _climbContactCount > 0 && _stepsSinceLastJump > 2;
+
+        public bool InWater => _submergence > 0f;
+        public bool Swimming => _submergence >= _swimThreshold;
+        
+        
         #endregion
 
         public void SetMinClimbDotProduct(float minClimbDotProduct)
@@ -189,18 +207,12 @@ namespace FGJ24.Player
         }
         public void Falling(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
         {
-            UpdateGravity();
-            UpdateGravityAlignment();
-            AlignCollider();
-            
-            _stepsSinceLastGrounded += 1;
-            _stepsSinceLastJump += 1;
-            
             velocity = HorizontalMovement(velocity, acceleration, playerInput, maxSpeed, _contactNormal);
             
             AdjustVelocityDebug(velocity, playerInput, maxSpeed);
             
             velocity += _gravity * Time.deltaTime;
+            
             _velocity = velocity;
         }
 
@@ -209,17 +221,16 @@ namespace FGJ24.Player
         {
             _collider.transform.rotation = Quaternion.LookRotation(_forwardAxis, _upAxis);
         }
-
-        public void Move(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
+        public void Swim(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
         {
             UpdateGravity();
             UpdateGravityAlignment();
             AlignCollider();
             _stepsSinceLastGrounded += 1;
             _stepsSinceLastJump += 1;
-
+            
             //are we on an actionable surface?
-            if (CheckClimbing() || GetIsGrounded() || SnapToGround() || CheckSteepContacts())
+            if (CheckClimbing() || CheckSwimming() || GetIsGrounded() || CheckSteepContacts())
             {
                 if (_isSnapping)
                 {
@@ -247,13 +258,64 @@ namespace FGJ24.Player
             {
                 _contactNormal = _upAxis;
             }
+            
+            velocity *= 1f - _waterDrag * _submergence * Time.deltaTime;
+            velocity = HorizontalMovement(velocity, acceleration, playerInput,maxSpeed, _contactNormal);
+            velocity += _gravity * ((1f - _buoyancy * _submergence) * Time.deltaTime);
+            
+            _velocity = velocity;
+        }
 
+        public void UpdatePhysicsState()
+        {
+            _stepsSinceLastGrounded += 1;
+            _stepsSinceLastJump += 1;
+            _position = _rigidbody.position;
+            _velocity = _rigidbody.velocity;
+            if (CheckClimbing() || CheckSwimming() || GetIsGrounded() || SnapToGround() || CheckSteepContacts())
+            {
+                if (_isSnapping)
+                {
+                    _contactNormal = _snapContactNormal != Vector3.zero ? _snapContactNormal : _upAxis;
+                    float dot = Vector3.Dot(_velocity, _contactNormal);
+                    if (dot > 0f)
+                    {
+                        _velocity = (_velocity - _contactNormal * dot).normalized * _velocity.magnitude;
+                    }
+                }
+                if (_contactNormal == Vector3.zero)
+                {
+                    _contactNormal = _upAxis;
+                }
+                _stepsSinceLastGrounded = 0;
+                if (_stepsSinceLastJump > 1)
+                {
+                    _jumpPhase = 0;
+                }
+                if (_groundContactCount > 1)
+                    _contactNormal.Normalize();
+            }
+            else
+            {
+                //Debug.Log("Checks fell through!");
+                _contactNormal = _upAxis;
+            }
+            //Debug.Log(this + "Contact normal: " + _contactNormal);
+            
             if (_connectedRigidbody)
             {
                 if (_connectedRigidbody.isKinematic || _connectedRigidbody.mass >= _rigidbody.mass)
                 {
                     UpdateConnectionState();
                 }
+            }
+        }
+
+        public void Move(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
+        {
+            if (InWater)
+            {
+                velocity += _gravity * ((1f - _waterDrag * _submergence) * Time.deltaTime);
             }
             
             velocity = HorizontalMovement(velocity, acceleration, playerInput,maxSpeed, _contactNormal);
@@ -273,8 +335,19 @@ namespace FGJ24.Player
             velocity += _gravity * Time.deltaTime;
             _velocity = velocity;
         }
-        
-        
+
+        private bool CheckSwimming()
+        {
+            if(Swimming){
+                _groundContactCount = 0;
+                _contactNormal = _upAxis;
+                //Debug.Log("CheckSwimming() check returned true");
+                return true;
+            }
+            return false;
+        }
+
+
         public void Climbing(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
         {
             UpdateGravity();
@@ -354,45 +427,80 @@ namespace FGJ24.Player
                 }
                 _groundContactCount = 1;
                 _contactNormal = _climbNormal;
+                //Debug.Log("Climb check returned true");
                 return true;
             }
             return false;
         }
 
+        private Vector3 RemoveUpVelocity(Vector3 velocity, Vector3 upAxis)
+        {
+            velocity -= Vector3.Project(velocity, upAxis);
+            return velocity;
+        }
+        
+        private Vector3 CheckIfThereIsVelocityUpwardsUpAxis(Vector3 velocity, Vector3 upAxis)
+        {
+            if (Vector3.Dot(velocity, upAxis) > 0f)
+            {
+                velocity = RemoveUpVelocity(velocity, upAxis);
+            }
+            return velocity;
+        }
+        
+    
+        public void AlignForwardAxisToContactNormal()
+        {
+            _forwardAxis = ProjectDirectionOnContactPlane(_forwardAxis, _contactNormal);
+        }
+
+        public void MakeSureForwardAxisIsDownwardsAlongTheSurface()
+        {
+            
+        }
+        
         public void Sliding(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
         {
-            UpdateGravity();
-            UpdateGravityAlignment();
-            AlignCollider();
-            _stepsSinceLastGrounded += 1;
-            _stepsSinceLastJump += 1;
-
-            if (GetIsGrounded() || CheckSteepContacts())
-            {
-                if (_contactNormal == Vector3.zero)
-                {
-                    _contactNormal = _upAxis;
-                }
-
-                _stepsSinceLastGrounded = 0;
-                if (_stepsSinceLastJump > 1)
-                {
-                    _jumpPhase = 0;
-                }
-
-                if (_groundContactCount > 1)
-                    _contactNormal.Normalize();
-            }
-            else
-            {
-                _contactNormal = _upAxis;
-            }
-
-            velocity = HorizontalMovement(velocity, acceleration, playerInput, maxSpeed, _contactNormal);
-
+            velocity = CheckIfThereIsVelocityUpwardsUpAxis(velocity, _upAxis);
+            //velocity = HorizontalMovement(velocity, acceleration, playerInput, maxSpeed, _contactNormal);
+            
+            float originalSpeed = velocity.magnitude;
+            
+            Vector3 newForward = ProjectDirectionOnContactPlane(-_upAxis, _contactNormal);
+            
+            float maxSpeedChange = acceleration * Time.deltaTime;
+            
+            float newSpeed = Mathf.MoveTowards(originalSpeed, maxSpeed, maxSpeedChange);
+            
+            
+            velocity += newForward * newSpeed;
             
             velocity += _gravity * Time.deltaTime;
+            
+            if (_isSnapping)
+            {
+                if (_distanceFromGround > _stepSmooth)
+                {
+                    _position -= _upAxis * _stepSmooth;
+                }
+            }
+            
+            AdjustVelocityDebug(velocity, playerInput, maxSpeed);
             _velocity = velocity;
+        }
+
+        private Vector3 ForwardMovement(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed, Vector3 contactNormal)
+        {
+            Vector3 zAxis = ProjectDirectionOnContactPlane(_forwardAxis, contactNormal);
+
+            Vector3 relativeVelocity = velocity - _connectionVelocity;
+            float currentZ = Vector3.Dot(relativeVelocity, zAxis);
+
+            float maxSpeedChange = acceleration * Time.deltaTime;
+            
+            float newZ = Mathf.MoveTowards(currentZ, playerInput.y * maxSpeed, maxSpeedChange);
+
+            return velocity + zAxis * (newZ - currentZ);
         }
 
         public void Jump(Vector3 velocity, float acceleration, Vector2 playerInput, float maxSpeed)
@@ -503,20 +611,19 @@ namespace FGJ24.Player
         public void EvaluateCollisions(Collision collision)
         {
             int layer = collision.gameObject.layer;
-            Debug.Log("Layer: " + layer);
+            //Debug.Log("Layer: " + layer);
             if((_probeMask & (1 << layer)) != 0)
             {
-                Debug.Log("Probe Mask");
+                //Debug.Log("Probe Mask");
                 for (int i = 0; i < collision.contactCount; i++)
                 {
-                    Debug.Log("Contact count: " + collision.contactCount);
+                    //Debug.Log("Contact count: " + collision.contactCount);
                     Vector3 normal = collision.GetContact(i).normal;
                     float upDot = Vector3.Dot(_upAxis, normal);
-                    Debug.Log("Ground Contact. upDot: " + upDot + " minGroundDotProduct: " + _minGroundDotProduct);
                     //check ground contacts
                     if(upDot >= _minGroundDotProduct)
                     {
-                       Debug.Log("Ground Contact");
+                       //Debug.Log("Ground Contact");
                         _groundContactCount += 1;
                         _contactNormal += normal;
                         _connectedRigidbody = collision.rigidbody;
@@ -526,7 +633,7 @@ namespace FGJ24.Player
                     //if not ground contact is it steep contact?
                     if (upDot < _minGroundDotProduct && upDot >= _minSteepDotProduct)
                     {
-                        Debug.Log("Steep Contact");
+                        //Debug.Log("Steep Contact");
                         _steepContactCount += 1;
                         _steepNormal += normal;
                         if (_groundContactCount == 0)
@@ -539,7 +646,7 @@ namespace FGJ24.Player
                     //if not steep contact is it climb contact?
                     if (upDot < _minSteepDotProduct && upDot >= _minClimbDotProduct)
                     {
-                        Debug.Log("Climb Contact");
+                        //Debug.Log("Climb Contact");
                         _climbContactCount += 1;
                         _climbNormal += normal;
                         _lastClimbNormal = normal;
@@ -613,38 +720,82 @@ namespace FGJ24.Player
                 }
             }
         }
+        
+        
+        public void HandleTriggerEnter(Collider collider)
+        {
+            int layer = collider.gameObject.layer;
+            if ((_waterMask & (1 << layer)) != 0)
+            {
+               EvaluateSubmergence(collider);
+            }
+        }
+
+
+        public void HandleTriggerStay(Collider collider)
+        {
+            int layer = collider.gameObject.layer;
+            if ((_waterMask & (1 << layer)) != 0)
+            {
+                EvaluateSubmergence(collider);
+            }
+        }
+
+        private void EvaluateSubmergence(Collider collider)
+        {
+            if(Physics.Raycast(_rigidbody.position + _upAxis * _submergenceOffset, -_upAxis, out RaycastHit hit, _submergenceRange + 1, _waterMask, QueryTriggerInteraction.Collide))
+            {
+                _submergence = 1f - hit.distance / _submergenceRange;
+            }
+            else
+            {
+                _submergence = 0f;
+            }
+        }
 
 
         public bool SnapToGround()
         {
-            if (_stepsSinceLastGrounded > 1 || _stepsSinceLastJump <= 2)
+            if (_stepsSinceLastGrounded > 1 || _stepsSinceLastJump <= 2 || InWater)
                 return false;
 
             float speed = _velocity.magnitude;
             if (speed > _maxSnapSpeed)
                 return false;
 
-            if (!Physics.CapsuleCast(_position + _upAxis * _collider.center.y - _upAxis * (_collider.radius),
-                    _position - _upAxis * _collider.radius + _upAxis * _collider.height,
-                    _collider.radius,
-                    -_upAxis,
-                    out RaycastHit hit, _probeDistance, _probeMask))
+            float offset = 0.05f;
+            Vector3 capsuleCenter = _rigidbody.position + _collider.center;
+            float capsuleHeight = _collider.height;
+            float capsuleRadius = _collider.radius - offset;
+            
+            Vector3 point1 = capsuleCenter + _upAxis * (-capsuleHeight * 0.5f + capsuleRadius);
+            Vector3 point2 = capsuleCenter + _upAxis * (capsuleHeight * 0.5f - capsuleRadius);
+            
+            if (!Physics.CapsuleCast(point1,point2,capsuleRadius, -_upAxis,
+                    out RaycastHit hit, _probeDistance, _probeMask,QueryTriggerInteraction.Ignore))
             {
-                Debug.DrawRay(_position + _upAxis * _collider.center.y - _upAxis * (_collider.radius), _rightAxis * _probeDistance, Color.yellow, 10f);
+                Debug.DrawRay(_position + _upAxis * _collider.center.y - _upAxis * (_collider.radius+0.1f), _rightAxis * _probeDistance, Color.black, 10f);
                 Debug.DrawRay(_position - _upAxis * _collider.radius + _upAxis * _collider.height, _rightAxis * _probeDistance, Color.yellow, 10f);
                 Debug.DrawLine(_position, _position + -_upAxis * _probeDistance, Color.red, 10f);
                 Debug.DrawLine(_position, _position + _upAxis * _collider.height, Color.magenta, 10f);
                 return false;
             }
+            
+            //Debug.Log("Collider that was hit: " + hit.collider.name);
 
             Debug.DrawRay(_position + _upAxis * _collider.center.y - _upAxis * (_collider.radius), _rightAxis * _probeDistance, Color.yellow, 10f);
             Debug.DrawRay(_position - _upAxis * _collider.radius + _upAxis * _collider.height, _rightAxis * _probeDistance, Color.yellow, 10f);
             Debug.DrawLine(_position, _position + _upAxis * _collider.height, Color.magenta, 10f);
             Debug.DrawLine(_position, hit.point, Color.green, 10f);
 
-            if (GroundCheck(_upAxis, hit.normal, hit.collider.gameObject.layer))
+            float upDot = Vector3.Dot(_upAxis, hit.normal);
+            //Debug.LogWarning("UpDot: " + upDot + " MinGroundDotProduct: " + _minGroundDotProduct + " hit.normal " + hit.normal +" contact normal : " + _contactNormal);
+            if (upDot < _minGroundDotProduct)
+            {
                 return false;
-
+            }
+            
+            //Debug.Log("SnapToGround returned");
             _isSnapping = true;
             _groundContactCount = 1;
             _snapContactNormal = hit.normal;
@@ -653,35 +804,29 @@ namespace FGJ24.Player
             return true;
         }
 
+        private void EvaluateContactPoint()
+        {
+            throw new NotImplementedException();
+        }
+
         private bool SteepCheck(float normalY, int gameObjectLayer)
         {
             if (normalY > GetMinDot(gameObjectLayer) && normalY < GetMinSteepDotProduct())
             {
-                Debug.Log("SteepCheck True");
+                //Debug.Log("SteepCheck True");
                 return true;
             }
 
-            Debug.Log("SteepCheck False");
-            return false;
-        }
-
-        public bool GroundCheck(Vector3 upAxis, Vector3 hitNormal, int layer)
-        {
-            float upDot = Vector3.Dot(upAxis, hitNormal);
-            if (upDot < GetMinDot(layer))
-            {
-                return true;
-            }
-
+            //Debug.Log("SteepCheck False");
             return false;
         }
 
         public void AdjustVelocity(Vector3 velocity, float acceleration, Vector3 desiredVelocity, bool enableSnap)
         {
-            Debug.Log("Desired velocity: " + desiredVelocity + " velocity: " + velocity + " acceleration: " + acceleration + " enableSnap: " + enableSnap);
+            //Debug.Log("Desired velocity: " + desiredVelocity + " velocity: " + velocity + " acceleration: " + acceleration + " enableSnap: " + enableSnap);
             if (_contactNormal == Vector3.zero)
             {
-                Debug.Log("Contact normal is zero!");
+                //Debug.Log("Contact normal is zero!");
                 _contactNormal = desiredVelocity.normalized;
             }
 
@@ -703,7 +848,7 @@ namespace FGJ24.Player
             float newZ = Mathf.MoveTowards(currentZ, desiredVelocity.z, maxSpeedChange);
 
 
-            Debug.Log(" currentY: " + velocity.y + " desiredVelocity.y: " + desiredVelocity.y + " maxSpeedChange: " + maxSpeedChange + " Time.deltaTime: " + Time.deltaTime + " acceleration: " + acceleration);
+            //Debug.Log(" currentY: " + velocity.y + " desiredVelocity.y: " + desiredVelocity.y + " maxSpeedChange: " + maxSpeedChange + " Time.deltaTime: " + Time.deltaTime + " acceleration: " + acceleration);
 
             if (!enableSnap)
             {
@@ -790,6 +935,7 @@ namespace FGJ24.Player
         public void ClearState()
         {
             _isSnapping = false;
+            _submergence = 0f;
             _groundContactCount = _steepContactCount = _climbContactCount = 0;
             _contactNormal = _steepNormal = _climbNormal = Vector3.zero;
             _connectionVelocity = Vector3.zero;
@@ -808,6 +954,7 @@ namespace FGJ24.Player
                     _groundContactCount = 1;
                     _steepContactCount = 0;
                     _contactNormal = _steepNormal;
+                    //Debug.Log("Steep contacts check returned true");
                     return true;
                 }
             }
@@ -870,6 +1017,7 @@ namespace FGJ24.Player
 
         public bool GetIsGrounded()
         {
+            //Debug.Log("IsGrounded: " + IsGrounded);
             return IsGrounded;
         }
 
@@ -1033,8 +1181,9 @@ namespace FGJ24.Player
 
         public void UpdateGravity()
         {
-            _gravity = CustomGravity.GetGravity(_position, out var upAxis);
-            _upAxis = upAxis;
+            _gravity = CustomGravity.GetGravity(_position, out _upAxis);
+            UpdateGravityAlignment();
+            AlignCollider();
         }
 
         public void UpdateUpAxisTransform()
@@ -1058,5 +1207,7 @@ namespace FGJ24.Player
         {
             _minClimbDotProduct = Mathf.Cos(_maxClimbAngle * Mathf.Deg2Rad);
         }
+
+
     }
 }

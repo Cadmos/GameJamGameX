@@ -19,6 +19,7 @@ namespace FGJ24.Player
         private PlayerJumpState _jumpState;
         
         private PlayerClimbState _climbState;
+        private PlayerSwimState _swimState;
         
         private PlayerFallingState _fallingState;
         private PlayerLandingState _landingState;
@@ -79,6 +80,11 @@ namespace FGJ24.Player
             return _climbState;
         }
         
+        public PlayerSwimState GetPlayerSwimState()
+        {
+            return _swimState;
+        }
+        
         public PlayerFallingState GetPlayerFallingState()
         {
             return _fallingState;
@@ -137,6 +143,7 @@ namespace FGJ24.Player
             _dashState = new PlayerDashState(_character, _controller);
             _jumpState = new PlayerJumpState(_character, _controller);
             _climbState = new PlayerClimbState(_character, _controller);
+            _swimState = new PlayerSwimState(_character, _controller);
             
             _fallingState = new PlayerFallingState(_character, _controller);
             _slidingState = new PlayerSlidingState(_character, _controller);
@@ -150,19 +157,20 @@ namespace FGJ24.Player
             _dieState = new PlayerDieState(_character, _controller);
             _winState = new PlayerWinState(_character, _controller);
             
-            _currentState = _idleState;
+            _currentState = _fallingState;
         }
 
         public void Update()
         {
-            DebugCanvasController.Instance.SetStateText(_currentStateEnum.ToString());
+            //Debug.Log("Update, Frame " + Time.frameCount + "State: " + _currentState);
             _currentState.UpdateState(this);
         }
 
         public void FixedUpdate()
         {
-            _controller.SaveRigidBody();
+            //Debug.Log("FixedUpdate, Frame " + Time.frameCount + "State: " + _currentState);
             _currentState.FixedUpdateState(this);
+            DebugCanvasController.Instance.SetStateText(_currentStateEnum.ToString());
             _controller.UpdateRigidBody();
             _controller.ClearState();
         }

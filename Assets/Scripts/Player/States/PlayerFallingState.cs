@@ -12,63 +12,38 @@ namespace FGJ24.Player
         {
             player.SetCurrentStateEnum(PlayerStateEnum.Falling);
             _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Falling);
+            Falling();
         }
 
         public override void UpdateState(PlayerStateManager player)
         {
+
+        }
+
+        public override void FixedUpdateState(PlayerStateManager player)
+        {
+            _controller.UpdateGravity();
+            _controller.UpdatePhysicsState();
+            
             if (_controller.GetIsGrounded())
             {
-                if(_controller.HaveWeWon())
-                {
-                    player.SwitchState(player.GetPlayerWinState());
-                    return;
-                }
-            
-                if(_controller.HaveWeLost())
-                {
-                    player.SwitchState(player.GetPlayerDieState());
-                    return;
-                }
-                
-                if (PlayerControls.Instance.interactData.interactPerformed)
-                {
-                    player.SwitchState(player.GetPlayerGatherState());
-                    return;
-                }
-
-                if (PlayerControls.Instance.jumpData.jumpPerformed && _controller.GetNextJumpTime() <= Time.time && _controller.GetJumpPhase() == 0)
-                {     
-                    player.SwitchState(player.GetPlayerJumpState());
-                    return;
-                }
-
-                if (PlayerControls.Instance.dashData.dashPerformed && _controller.GetNextDashTime() <= Time.time)
-                {
-                    player.SwitchState(player.GetPlayerDashState());
-                    return;
-                }
-
+                Debug.Log("Grounded in FallingState why?");
                 if (PlayerControls.Instance.moveData.movePerformed == false)
                 {
                     player.SwitchState(player.GetPlayerStoppingState());
                     return;
                 }
-                
                 player.SwitchState(player.GetPlayerLandingState());
                 return;
             }
 
             if (_controller.GetIsSteep())
             {
+                Debug.Log("Steep in FallingState why?");
                 player.SwitchState(player.GetPlayerSlidingState());
                 return;
             }
-        }
-
-        public override void FixedUpdateState(PlayerStateManager player)
-        {
-            _controller.Falling(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingMoveAcceleration(),PlayerControls.Instance.moveData.moveValue, _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingSpeed());
-            //_controller.LimitVelocity(_character.GetCharacterAttributes().GetCharacterFallingStats().GetMaxFallingSpeed());
+            Falling();
         }
 
         public override void LateUpdateState(PlayerStateManager player)
@@ -80,6 +55,11 @@ namespace FGJ24.Player
         public override void ExitState(PlayerStateManager player)
         {
             player.SetPreviousStateEnum(PlayerStateEnum.Falling);
+        }
+
+        private void Falling()
+        {
+            _controller.Falling(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingMoveAcceleration(),PlayerControls.Instance.moveData.moveValue, _character.GetCharacterAttributes().GetCharacterFallingStats().GetFallingSpeed());
         }
     }
 }

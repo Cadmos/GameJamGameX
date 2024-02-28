@@ -1,33 +1,36 @@
 using UnityEngine;
+
 namespace FGJ24.Player
 {
-    public class PlayerClimbState : PlayerBaseState
+    public class PlayerDiveState : PlayerBaseState
     {
-        public PlayerClimbState(CharacterObject character, PlayerController controller) : base(character, controller)
+        public PlayerDiveState(CharacterObject character, PlayerController controller) : base(character, controller)
         {
         }
+
         public override void EnterState(PlayerStateManager player)
         {
-            player.SetCurrentStateEnum(PlayerStateEnum.Climb);
-            _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Move);
+            player.SetCurrentStateEnum(PlayerStateEnum.Swim);
+            _character.GetCharacterAnimator().GetAnimator().SetInteger(StateEnum, (int)PlayerStateEnum.Swim);
         }
+
         public override void UpdateState(PlayerStateManager player)
         {
             if(_controller.InWater)
             {
                 if(_controller.Swimming)
                 {
-                    player.SwitchState(player.GetPlayerSwimState());
                     return;
                 }
             }
-             
+            
             if(_controller.IsClimbing)
             {
+                player.SwitchState(player.GetPlayerClimbState());
                 return;
             }
             
-            if (_controller.WasGroundedLastFrame || _controller.GetIsGrounded() || _controller.IsSnapping)
+            if (_controller.IsGrounded)
             {
                 if (_controller.HaveWeWon())
                 {
@@ -54,11 +57,6 @@ namespace FGJ24.Player
                     player.SwitchState(player.GetPlayerDashState());
                     return;
                 }
-                if (PlayerControls.Instance.moveData.movePerformed)
-                {
-                    player.SwitchState(player.GetPlayerMoveState());
-                    return;
-                }
                 if (PlayerControls.Instance.moveData.movePerformed == false)
                 {
                     player.SwitchState(player.GetPlayerStoppingState());
@@ -67,30 +65,32 @@ namespace FGJ24.Player
                 return;
             }
 
-            if (_controller.GetIsSteep())
+            if (_controller.IsSteep)
             {
                 player.SwitchState(player.GetPlayerSlidingState());
                 return;
             }
 
-            if (!_controller.GetIsGrounded() && !_controller.WasGroundedLastFrame && !_controller.IsSnapping)
+            if (!_controller.InWater)
             {
                 player.SwitchState(player.GetPlayerFallingState());
             }
+                
         }
+
         public override void FixedUpdateState(PlayerStateManager player)
         {
-            _controller.Climbing(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterClimbStats().GetAcceleration(), PlayerControls.Instance.moveData.moveValue, _character.GetCharacterAttributes().GetCharacterClimbStats().GetClimbSpeed());
+            _controller.Swim(_controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterSwimStats().GetAcceleration(), PlayerControls.Instance.moveData.moveValue, _character.GetCharacterAttributes().GetCharacterSwimStats().GetSwimSpeed());
         }
+
         public override void LateUpdateState(PlayerStateManager player)
         {
-            if(_controller.GetVelocity().x != 0f && _controller.GetVelocity().z != 0f)
-                _character.RotateCharacter( _controller.GetVelocity(), _character.GetCharacterAttributes().GetCharacterMoveStats().GetTurnSpeed(),_controller.GetUpAxis());
+            
         }
 
         public override void ExitState(PlayerStateManager player)
         {
-            player.SetPreviousStateEnum(PlayerStateEnum.Move);
+            player.SetPreviousStateEnum(PlayerStateEnum.Swim);
         }
     }
 }
